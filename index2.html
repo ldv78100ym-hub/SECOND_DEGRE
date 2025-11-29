@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCM Algèbre Séquentiel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --primary-dark: #388E3C;
+            --secondary-color: #2196F3; /* Blue */
+            --background-light: #f7f9fc;
+            --text-color: #333;
+            --text-light: #555;
+            --border-color: #e0e0e0;
+            --card-background: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --correct-bg: #e8f5e9; /* Light green */
+            --correct-border: #81c784;
+            --correct-text: #2e7d32;
+            --incorrect-bg: #ffebee; /* Light red */
+            --incorrect-border: #e57373;
+            --incorrect-text: #c62828;
+            --info-bg: #e3f2fd; /* Light blue */
+            --info-border: #64b5f6;
+            --info-text: #1976d2;
+        }
+
+        body {
+            font-family: 'Open Sans', 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border-top: 5px solid var(--primary-color);
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        
+        #quiz-status {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .question-card {
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--card-background);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-height: 250px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        /* --- STYLES DES VIGNETTES --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            position: relative;
+            min-height: 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            pointer-events: auto;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+        }
+
+        .option:hover:not(.disabled) {
+            background-color: #f0f8ff;
+            border-color: var(--secondary-color);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            margin-top: 4px;
+            transform: scale(1.1);
+            accent-color: var(--primary-color);
+            flex-shrink: 0;
+        }
+        
+        .option span {
+            font-size: 0.95em;
+            color: var(--text-light);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            flex-grow: 1;
+        }
+
+        .action-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: none;
+        }
+
+        #submit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        #submit-btn:hover {
+            background-color: #196fbf;
+            transform: translateY(-2px);
+        }
+
+        #next-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #next-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        #restart-btn {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+
+        .result-message {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.2em;
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Feedback Styles */
+        .correct-feedback {
+            background-color: var(--correct-bg);
+            border: 2px solid var(--correct-border);
+            color: var(--correct-text);
+        }
+
+        .incorrect-feedback {
+            background-color: var(--incorrect-bg);
+            border: 2px solid var(--incorrect-border);
+            color: var(--incorrect-text);
+        }
+
+        .unanswered-feedback {
+            background-color: var(--info-bg);
+            border: 2px solid var(--info-border);
+            color: var(--info-text);
+        }
+
+        .rationale {
+            margin-top: 15px;
+            padding: 15px;
+            border-left: 5px solid var(--secondary-color);
+            background-color: var(--info-bg);
+            font-size: 0.95em;
+            color: var(--text-light);
+            border-radius: 0 0 8px 8px;
+            display: none;
+        }
+
+        /* Feedback for options */
+        .option.correct-answer {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct-text);
+        }
+
+        .option.incorrect-chosen {
+            background-color: var(--incorrect-bg) !important;
+            border-color: var(--incorrect-border) !important;
+            color: var(--incorrect-text);
+        }
+
+        .option .feedback-icon {
+            margin-left: 10px;
+            font-size: 1.1em;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .option.correct-answer .feedback-icon { color: var(--correct-text); }
+        .option.incorrect-chosen .feedback-icon { color: var(--incorrect-text); }
+
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 15px auto;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .question-text {
+                font-size: 1.1em;
+            }
+            .options-grid {
+                 grid-template-columns: 1fr;
+            }
+            .action-container {
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>QCM : <strong>Formes Quadratiques et Identités Remarquables</strong></h1>
+    <div id="quiz-status"></div>
+    <div id="quiz">
+        </div>
+    <div id="feedback-section">
+        <div id="rationale-display" class="rationale"></div>
+    </div>
+    
+    <div class="action-container">
+        <button id="submit-btn" class="action-btn" onclick="submitAnswer()">Valider la réponse</button>
+        <button id="next-btn" class="action-btn" onclick="nextQuestion()">Question Suivante</button>
+        <button id="restart-btn" class="action-btn" onclick="restartQuiz()">Recommencer le Quiz</button>
+    </div>
+    
+    <div id="results" class="result-message"></div>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "Quelle est la forme développée de l'expression $$(2x - 3)(x + 4)$$ ?",
+            options: [
+                { text: "$$2x^2 + 5x - 12$$", correct: true },
+                { text: "$$2x^2 - 11x - 12$$" },
+                { text: "$$2x^2 + 5x + 12$$" },
+                { text: "$$2x^2 - 5x - 12$$" }
+            ],
+            rationale: "En utilisant la double distributivité, on obtient \\(2x \\cdot x + 2x \\cdot 4 - 3 \\cdot x - 3 \\cdot 4 = 2x^2 + 8x - 3x - 12 = 2x^2 + 5x - 12\\)."
+        },
+        {
+            question: "Quelle est la forme factorisée de l'expression $$9x^2 - 25$$ (différence de deux carrés) ?",
+            options: [
+                { text: "$$(9x - 25)(9x + 25)$$"},
+                { text: "$$(3x - 5)^2$$" },
+                { text: "$$(3x - 5)(3x + 5)$$", correct: true },
+                { text: "$$(3x^2 - 5)(3x^2 + 5)$$"}
+            ],
+            rationale: "C'est une différence de deux carrés \\(a^2 - b^2\\) avec \\(a = 3x\\) et \\(b = 5\\), donc la factorisation est \\((3x - 5)(3x + 5)\\)."
+        },
+        {
+            question: "Quelle est la <strong>forme canonique</strong> de la fonction $$f(x) = x^2 - 6x + 11$$ ?",
+            options: [
+                { text: "$$(x - 3)^2 + 2$$", correct: true },
+                { text: "$$(x + 3)^2 + 2$$" },
+                { text: "$$(x - 6)^2 + 5$$" },
+                { text: "$$(x - 3)^2 + 11$$" }
+            ],
+            rationale: "La forme canonique est \\(a(x-\\alpha)^2+\\beta\\). On trouve \\(\\alpha = -b/(2a) = 3\\) et \\(\\beta = f(3) = 2\\). Soit \\((x-3)^2+2\\)."
+        },
+        {
+            question: "Quelle expression est équivalente à $$(4x - 1)^2$$ (carré d'une différence) ?",
+            options: [
+                { text: "$$16x^2 - 1$$"},
+                { text: "$$16x^2 - 4x + 1$$" },
+                { text: "$$16x^2 - 8x + 1$$", correct: true },
+                { text: "$$4x^2 - 8x + 1$$" }
+            ],
+            rationale: "C'est l'identité remarquable \\((a-b)^2 = a^2 - 2ab + b^2\\). Avec \\(a = 4x\\) et \\(b = 1\\), on a \\((4x)^2 - 2(4x)(1) + 1^2 = 16x^2 - 8x + 1\\)."
+        },
+        {
+            question: "L'expression $$a^2 + 2ab + b^2$$ est la forme développée de :",
+            options: [
+                { text: "$$(a - b)^2$$"},
+                { text: "$$(a + b)^2$$", correct: true },
+                { text: "$$a^2 - b^2$$" },
+                { text: "$$(a + b)(a - b)$$" }
+            ],
+            rationale: "Cette expression est la formule du carré d'une somme, qui est l'une des identités remarquables fondamentales."
+        },
+        {
+            question: "Soit l'expression $$-3(x - 2)(x + \\frac{1}{3})$$ (forme factorisée). Quelles sont les racines \\(x_1\\) et \\(x_2\\) ?",
+            options: [
+                { text: "$$x_1 = 2$$ et $$x_2 = 3$$"},
+                { text: "$$x_1 = -2$$ et $$x_2 = \\frac{1}{3}$$" },
+                { text: "$$x_1 = 2$$ et $$x_2 = -\\frac{1}{3}$$", correct: true },
+                { text: "$$x_1 = -2$$ et $$x_2 = -\\frac{1}{3}$$" }
+            ],
+            rationale: "La forme factorisée est \\(a(x-x_1)(x-x_2)\\). Ici, \\(x-x_1 = x-2 \\implies x_1 = 2\\) et \\(x-x_2 = x - (-\\frac{1}{3}) = x + \\frac{1}{3} \\implies x_2 = -\\frac{1}{3}\\)."
+        },
+        {
+            question: "Factorisez l'expression $$16x^2 + 8x + 1$$ :",
+            options: [
+                { text: "$$(4x + 1)^2$$", correct: true },
+                { text: "$$(8x + 1)^2$$" },
+                { text: "$$(4x - 1)^2$$" },
+                { text: "$$(16x + 1)^2$$" }
+            ],
+            rationale: "L'expression est de la forme \\(a^2+2ab+b^2\\) avec \\(a=4x\\) et \\(b=1\\). Elle se factorise en \\((4x+1)^2\\)."
+        },
+        {
+            question: "Associez la forme $$a(x-\\alpha)^2+\\beta$$ au concept approprié :",
+            options: [
+                { text: "Forme Développée"},
+                { text: "Forme Factorisée" },
+                { text: "Forme Canonique", correct: true },
+                { text: "Différence de deux carrés" }
+            ],
+            rationale: "L'expression \\(a(x-\\alpha)^2+\\beta\\) est la forme canonique d'un polynôme du second degré, mettant en évidence les coordonnées du sommet \\(\\alpha\\) et \\(\\beta\\) de la parabole."
+        },
+        {
+            question: "La formule du <strong>carré d'une différence</strong> appliquée à $$(a - 2b)^2$$ donne :",
+            options: [
+                { text: "$$a^2 - 4b^2$$"},
+                { text: "$$a^2 - 4ab + 4b^2$$", correct: true },
+                { text: "$$a^2 + 4ab + 4b^2$$" },
+                { text: "$$a^2 - 2ab + 4b^2$$" }
+            ],
+            rationale: "En utilisant \\((A-B)^2 = A^2 - 2AB + B^2\\) avec \\(A=a\\) et \\(B=2b\\), on obtient \\(a^2 - 2(a)(2b) + (2b)^2 = a^2 - 4ab + 4b^2\\)."
+        },
+        {
+            question: "Donnez la forme développée de $$(\\frac{x}{2} + 3)^2$$ (carré d'une somme) :",
+            options: [
+                { text: "$$\\frac{x^2}{4} + 3x + 9$$", correct: true },
+                { text: "$$x^2 + 6x + 9$$" },
+                { text: "$$\\frac{x^2}{4} + 9$$" },
+                { text: "$$\\frac{x^2}{2} + 3x + 9$$" }
+            ],
+            rationale: "En appliquant \\((a+b)^2 = a^2 + 2ab + b^2\\) avec \\(a = \\frac{x}{2}\\) et \\(b = 3\\), on trouve \\((\\frac{x}{2})^2 + 2(\\frac{x}{2})(3) + 3^2 = \\frac{x^2}{4} + 3x + 9\\)."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answeredQuestions = [];
+
+    const quizDiv = document.getElementById('quiz');
+    const resultsDiv = document.getElementById('results');
+    const submitBtn = document.getElementById('submit-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const rationaleDisplay = document.getElementById('rationale-display');
+    const quizStatus = document.getElementById('quiz-status');
+
+    function updateStatus() {
+        if (currentQuestionIndex < questions.length) {
+            quizStatus.innerHTML = `Question ${currentQuestionIndex + 1} sur ${questions.length}`;
+        }
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+
+        const q = questions[currentQuestionIndex];
+        const index = currentQuestionIndex;
+
+        updateStatus();
+        resultsDiv.style.display = 'none';
+        rationaleDisplay.style.display = 'none';
+        
+        submitBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'none';
+
+        const qCardHtml = `
+            <div id="q-current" class="question-card">
+                <div class="question-text">${q.question}</div>
+                <div class="options-grid">
+                    ${q.options.map((option, oIndex) => `
+                        <label class="option" for="q${index}-o${oIndex}">
+                            <input type="radio" name="question${index}" id="q${index}-o${oIndex}" value="${oIndex}">
+                            <span>${option.text}</span>
+                            <span class="feedback-icon"></span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        quizDiv.innerHTML = qCardHtml;
+
+        // Force le rendu MathJax pour la nouvelle question
+        if (window.MathJax) {
+            MathJax.typesetPromise([quizDiv]); 
+        }
+    }
+
+    function submitAnswer() {
+        const index = currentQuestionIndex;
+        const q = questions[index];
+        const selectedOptionInput = document.querySelector(`input[name="question${index}"]:checked`);
+        const allOptionLabels = document.querySelectorAll('#q-current .option');
+
+        if (!selectedOptionInput) {
+            alert("Veuillez sélectionner une réponse.");
+            return;
+        }
+        
+        // Désactiver toutes les options
+        allOptionLabels.forEach(label => label.classList.add('disabled'));
+
+        const selectedIndex = parseInt(selectedOptionInput.value);
+        const isCorrect = q.options[selectedIndex].correct;
+
+        // Afficher l'explication
+        rationaleDisplay.innerHTML = `<strong>Explication :</strong> ${q.rationale}`;
+        rationaleDisplay.style.display = 'block';
+        
+        // Gérer le score
+        if (isCorrect && !answeredQuestions[index]) {
+            score++;
+            answeredQuestions[index] = true;
+        }
+
+        // Mettre à jour le feedback visuel
+        allOptionLabels.forEach(label => {
+            const input = label.querySelector('input');
+            const oIndex = parseInt(input.value);
+
+            // Retirer les classes de feedback précédentes
+            label.classList.remove('correct-answer', 'incorrect-chosen');
+            label.querySelector('.feedback-icon').innerHTML = '';
+
+            if (q.options[oIndex].correct) {
+                // Option correcte
+                label.classList.add('correct-answer');
+                label.querySelector('.feedback-icon').innerHTML = '&#10003;'; // Checkmark
+            } else if (oIndex === selectedIndex) {
+                // Option incorrecte sélectionnée
+                label.classList.add('incorrect-chosen');
+                label.querySelector('.feedback-icon').innerHTML = '&#10007;'; // Cross
+            }
+        });
+
+        // Mettre à jour les boutons
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+        
+        // Force le rendu MathJax pour l'explication
+        if (window.MathJax) {
+            MathJax.typesetPromise([rationaleDisplay]);
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    function showResults() {
+        quizDiv.innerHTML = '';
+        quizStatus.innerHTML = 'Quiz Terminé';
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'block';
+        rationaleDisplay.style.display = 'none';
+
+        const totalQuestions = questions.length;
+        const percentage = (score / totalQuestions) * 100;
+
+        resultsDiv.className = percentage >= 70 ? 'result-message correct-feedback' : 'result-message incorrect-feedback';
+        resultsDiv.innerHTML = `🎉 <strong>Félicitations !</strong> Votre score final est de <strong>${score}</strong> sur <strong>${totalQuestions}</strong> (${percentage.toFixed(0)}%).`;
+        resultsDiv.style.display = 'block';
+        
+        // Défilement vers les résultats
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+    
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        answeredQuestions = [];
+        resultsDiv.style.display = 'none';
+        loadQuestion();
+    }
+
+    // Initialisation
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
