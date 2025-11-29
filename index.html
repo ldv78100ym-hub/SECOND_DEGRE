@@ -19,6 +19,11 @@
             --text-main: #334155;
             --highlight: #fef3c7;
             --highlight-border: #f59e0b;
+
+            /* Nouveaux styles pour la Modale */
+            --modal-bg: rgba(0, 0, 0, 0.5);
+            --modal-content-bg: #ffffff;
+            --close-btn-color: #aaa;
         }
 
         body {
@@ -191,11 +196,115 @@
             padding: 15px;
             color: #166534;
         }
+
+        /* --- STYLES POUR LE BOUTON ET LA MODALE (AJOUTS) --- */
+        .copyright-btn-container {
+            max-width: 1200px; /* Aligné avec la largeur du conteneur principal */
+            margin: 20px auto 30px auto;
+            text-align: center;
+            width: 100%;
+        }
+        
+        #copyright-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            color: var(--text-main);
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        #copyright-btn:hover {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* Style de la boîte modale (fenêtre flottante) */
+        .modal {
+            display: none; /* Cachée par défaut */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--modal-bg); /* Fond semi-transparent */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: var(--modal-content-bg);
+            margin: 5% auto; /* 5% du haut et centré horizontalement */
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            width: 80%; /* Largeur de la modale */
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            color: var(--close-btn-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+	.container { max-width: 1100px; margin: auto; padding: 0 10px; }
+
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { 
+            color: var(--primary-color); 
+            border-bottom: 3px solid var(--primary-color); 
+            padding-bottom: 10px; 
+            display: inline-block; 
+            font-size: 2rem; 
+        }
+	.btn-retour-ressources {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #f8f9fa; /* Fond clair pour le contraste */
+            color: #333; /* Texte sombre */
+            text-decoration: none; /* Enlève le soulignement */
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 10px;
+            border: 1px solid #ced4da;
+            transition: background-color 0.3s;
+            font-size: 1em;
+        }
+
+        .btn-retour-ressources:hover {
+            background-color: #e2e6ea;
+        }
+
     </style>
 </head>
 <body>
-
     <h1>Second Degré : Étude Algébrique</h1>
+	<a href="https://ldv78100ym-hub.github.io/HOME/" class="btn-retour-ressources">
+            ⬅️ Autres ressources
+        </a>
+
     <p class="intro">
         On considère la parabole passant par les points \(A\) et \(B\) sur l'axe des abscisses, et par un point \(C\) quelconque.<br>
         <strong>Objectif :</strong> Retrouver l'expression complète de la fonction et déterminer le sommet par la méthode algébrique (système d'équations).
@@ -251,6 +360,29 @@
             <div id="feedback" class="feedback"></div>
             <div id="solutionBox" class="solution-box"></div>
         </div>
+    </div>
+    <div class="copyright-btn-container">
+        <button id="copyright-btn" onclick="showCopyrightModal()">Droits d'auteur</button>
+    </div>
+
+    <div id="copyright-modal" class="modal" onclick="closeCopyrightModalIfOutside(event)">
+        <div class="modal-content">
+            <span class="close-btn copyright-close-btn">&times;</span>
+            <h2>⚖️ Droits d'Auteur et Licence d'Utilisation</h2>
+            <p><b>Auteur : Yann Merdy (yann.merdy@gmail.com)</b> - Novembre 2025</p>
+            <hr>
+            <h3>Licence d'Utilisation Non Commerciale</h3>
+            <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par l'application ("Second Degré : Étude Algébrique") sont la propriété intellectuelle exclusive de l'auteur, Yann Merdy (yann.merdy@gmail.com).</p>
+            
+            <h4>Conditions :</h4>
+            <ul>
+                <li><b>Utilisation Privée et Éducative (Autorisée) :</b> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code et son contenu <b>uniquement</b> à des fins <b>personnelles, éducatives et non lucratives</b>.</li>
+                <li><b>Utilisation Commerciale (Interdite) :</b> Toute utilisation, distribution, intégration ou reproduction du code ou du contenu (total ou partiel) à des fins <b>commerciales, lucratives ou professionnelles</b> est <b>strictement interdite</b> sans un accord écrit préalable et explicite de l'auteur.</li>
+                <li><b>Attribution :</b> Toute reproduction ou modification doit conserver la mention de l'auteur originale (Yann Merdy) et la présente notice de droits d'auteur.</li>
+            </ul>
+            <p style="margin-top: 20px; font-style: italic;">Pour toute demande d'utilisation commerciale ou de licence spécifique, veuillez contacter l'auteur.</p>
+        </div>
+
     </div>
 
 <script>
@@ -411,6 +543,9 @@
     }
 
     function checkAnswer() {
+        // Supprimer toutes les classes de feedback avant de vérifier
+        document.querySelectorAll('input').forEach(i => i.classList.remove('incorrect', 'correct'));
+
         const u_xa = parseFloat(document.getElementById('in_xa').value);
         const u_xb = parseFloat(document.getElementById('in_xb').value);
         const u_xc = parseFloat(document.getElementById('in_xc').value);
@@ -428,46 +563,49 @@
         const r1 = Math.min(d.x1, d.x2);
         const r2 = Math.max(d.x1, d.x2);
 
+        // --- Vérifications ---
+        
         // Points A et B
-        let usersR = [u_xa, u_xb].sort((a,b)=>a-b);
-        if (Math.abs(usersR[0] - r1) < 0.1 && Math.abs(usersR[1] - r2) < 0.1) {
+        let usersR = [u_xa, u_xb].filter(v => !isNaN(v)).sort((a,b)=>a-b);
+        if (usersR.length === 2 && Math.abs(usersR[0] - r1) < 0.1 && Math.abs(usersR[1] - r2) < 0.1) {
              document.getElementById('in_xa').classList.add('correct');
              document.getElementById('in_xb').classList.add('correct');
         } else {
-             errors.push("Abscisses de A ou B incorrectes.");
+             errors.push("Abscisses de A et B incorrectes ou manquantes.");
              document.getElementById('in_xa').classList.add('incorrect');
              document.getElementById('in_xb').classList.add('incorrect');
         }
 
         // Point C
-        if (Math.abs(u_xc - d.M.x) < 0.1 && Math.abs(u_yc - d.M.y) < 0.1) {
+        if (!isNaN(u_xc) && !isNaN(u_yc) && Math.abs(u_xc - d.M.x) < 0.1 && Math.abs(u_yc - d.M.y) < 0.1) {
             document.getElementById('in_xc').classList.add('correct');
             document.getElementById('in_yc').classList.add('correct');
         } else {
-            errors.push("Coordonnées de C incorrectes.");
+            errors.push("Coordonnées de C incorrectes ou manquantes.");
             document.getElementById('in_xc').classList.add('incorrect');
             document.getElementById('in_yc').classList.add('incorrect');
         }
 
-        // a, b, c
-        if (Math.abs(u_a - d.a) < 0.01) document.getElementById('in_a1').classList.add('correct');
-        else { errors.push("Coefficient a incorrect."); document.getElementById('in_a1').classList.add('incorrect'); }
+        // a
+        if (!isNaN(u_a) && Math.abs(u_a - d.a) < 0.01) document.getElementById('in_a1').classList.add('correct');
+        else { errors.push("Coefficient a incorrect ou manquant."); document.getElementById('in_a1').classList.add('incorrect'); }
         
-        if (Math.abs(u_b - d.b) < 0.1 && Math.abs(u_c - d.c) < 0.1) {
+        // b et c
+        if (!isNaN(u_b) && !isNaN(u_c) && Math.abs(u_b - d.b) < 0.1 && Math.abs(u_c - d.c) < 0.1) {
              document.getElementById('in_b').classList.add('correct');
              document.getElementById('in_c').classList.add('correct');
         } else {
-             errors.push("Coefficients b ou c incorrects.");
+             errors.push("Coefficients b ou c incorrects ou manquants.");
              document.getElementById('in_b').classList.add('incorrect');
              document.getElementById('in_c').classList.add('incorrect');
         }
 
         // Sommet
-        if (Math.abs(u_alpha - d.alpha) < 0.1 && Math.abs(u_beta - d.beta) < 0.1) {
+        if (!isNaN(u_alpha) && !isNaN(u_beta) && Math.abs(u_alpha - d.alpha) < 0.1 && Math.abs(u_beta - d.beta) < 0.1) {
             document.getElementById('in_alpha').classList.add('correct');
             document.getElementById('in_beta').classList.add('correct');
         } else {
-            errors.push("Sommet (alpha, beta) incorrect.");
+            errors.push("Sommet (alpha, beta) incorrect ou manquant.");
             document.getElementById('in_alpha').classList.add('incorrect');
             document.getElementById('in_beta').classList.add('incorrect');
         }
@@ -516,7 +654,7 @@
         html += `<span class="step-title">3. Forme Développée</span>`;
         html += `<p>On développe l'expression \\( f(x) = ${d.a}(x - (${xA}))(x - (${xB})) \\) :<br>`;
         html += `\\( f(x) = ${d.a} [ x^2 - (${xA} + ${xB})x + (${xA}\\times${xB}) ] \\)<br>`;
-        html += `\\( f(x) = ${d.a}x^2 + (${-d.a*(xA+xB)})x + (${d.a*xA*xB}) \\)<br>`;
+        html += `\\( f(x) = ${d.a}x^2 + (${d.b})x + (${d.c}) \\)<br>`;
         html += `On identifie : \\( a=${d.a}, \\quad b=${d.b}, \\quad c=${d.c} \\).</p>`;
 
         // ETAPE 4 : Sommet par système (Valeurs directes)
@@ -546,7 +684,7 @@
         let carre = Math.pow(xA - d.alpha, 2);
         html += `\\( \\beta = -a(${xA} - ${d.alpha})^2 = -(${d.a}) \\times (${carre}) = \\mathbf{${d.beta}} \\)</p>`;
 
-        // CONCLUSION FINALE AJOUTÉE
+        // CONCLUSION FINALE 
         html += `<div class="conclusion-block">`;
         html += `<strong>Finalement,</strong><br>`;
         
@@ -563,6 +701,31 @@
         sol.innerHTML = html;
         MathJax.typesetPromise([sol]);
     }
+
+    // --- FONCTIONS DE LA MODALE (AJOUTS) ---
+    const copyrightModal = document.getElementById('copyright-modal');
+    
+    function showCopyrightModal() {
+        copyrightModal.style.display = 'block';
+    }
+
+    function hideCopyrightModal() {
+        copyrightModal.style.display = 'none';
+    }
+
+    function closeCopyrightModalIfOutside(event) {
+        if (event.target === copyrightModal) {
+            hideCopyrightModal();
+        }
+    }
+    
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && copyrightModal.style.display === 'block') {
+            hideCopyrightModal();
+        }
+    });
+    // --- FIN FONCTIONS DE LA MODALE ---
+
 
     window.onload = generateExercise;
 
