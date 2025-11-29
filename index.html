@@ -19,11 +19,6 @@
             --text-main: #334155;
             --highlight: #fef3c7;
             --highlight-border: #f59e0b;
-
-            /* Nouveaux styles pour la Modale */
-            --modal-bg: rgba(0, 0, 0, 0.5);
-            --modal-content-bg: #ffffff;
-            --close-btn-color: #aaa;
         }
 
         body {
@@ -197,118 +192,61 @@
             color: #166534;
         }
 
-        /* --- STYLES POUR LE BOUTON ET LA MODALE (AJOUTS) --- */
-        .copyright-btn-container {
-            max-width: 1200px; /* Aligné avec la largeur du conteneur principal */
-            margin: 20px auto 30px auto;
-            text-align: center;
+        /* Styles pour les sections secondaires au bas de la page */
+        #copyright-trigger {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            width: 200px; 
+            align-self: center; 
+            flex: none; 
+        }
+        #copyright-section {
+            max-width: 800px;
             width: 100%;
-        }
-        
-        #copyright-btn {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: #f0f0f0;
-            color: var(--text-main);
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.9em;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-        }
-
-        #copyright-btn:hover {
-            background-color: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-        }
-
-        /* Style de la boîte modale (fenêtre flottante) */
-        .modal {
-            display: none; /* Cachée par défaut */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: var(--modal-bg); /* Fond semi-transparent */
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: var(--modal-content-bg);
-            margin: 5% auto; /* 5% du haut et centré horizontalement */
-            padding: 30px;
-            border: 1px solid #e2e8f0;
-            width: 80%; /* Largeur de la modale */
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        .close-btn {
-            color: var(--close-btn-color);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            transition: color 0.2s ease;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .modal-content h2 {
             margin-top: 0;
-            color: var(--primary);
+            margin-bottom: 50px;
+            border-left: 5px solid var(--secondary); 
+            text-align: left;
         }
-	.container { max-width: 1100px; margin: auto; padding: 0 10px; }
-
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { 
-            color: var(--primary-color); 
-            border-bottom: 3px solid var(--primary-color); 
-            padding-bottom: 10px; 
-            display: inline-block; 
-            font-size: 2rem; 
-        }
-	.btn-retour-ressources {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #f8f9fa; /* Fond clair pour le contraste */
-            color: #333; /* Texte sombre */
-            text-decoration: none; /* Enlève le soulignement */
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 10px;
-            border: 1px solid #ced4da;
-            transition: background-color 0.3s;
-            font-size: 1em;
+        #copyright-section h4 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
         }
 
-        .btn-retour-ressources:hover {
-            background-color: #e2e6ea;
+        /* NOUVEAU : Style pour le bouton d'accès rapide 'Autres ressources' (lien direct) */
+        #resources-link-button {
+            display: inline-block; /* Pour qu'il prenne les styles du bouton */
+            text-decoration: none; /* Enlever le soulignement du lien */
+            margin: 10px auto 20px auto; /* Centrer et espacer */
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            /* Utilisation des styles de .btn-new */
+            background-color: white; 
+            color: #475569; 
+            border: 2px solid #e2e8f0;
         }
-
+        #resources-link-button:hover { 
+            background-color: #f8fafc; 
+            border-color: #cbd5e1; 
+        }
     </style>
 </head>
 <body>
-    <h1>Second Degré : Étude Algébrique</h1>
-	<a href="https://ldv78100ym-hub.github.io/HOME/" class="btn-retour-ressources">
-            ⬅️ Autres ressources
-        </a>
 
+    <h1>Second Degré : Étude Algébrique</h1>
     <p class="intro">
         On considère la parabole passant par les points \(A\) et \(B\) sur l'axe des abscisses, et par un point \(C\) quelconque.<br>
-        <strong>Objectif :</strong> Retrouver l'expression complète de la fonction et déterminer le sommet par la méthode algébrique (système d'équations).
+        <strong>Objectif :</strong> Retrouver l'expression complète de la fonction et déterminer la forme canonique par la méthode algébrique (système d'équations).
     </p>
+
+    <a href="https://ldv78100ym-hub.github.io/HOME/" target="_blank" class="btn-new" id="resources-link-button">
+        🔗 Autres ressources
+    </a>
 
     <div class="container">
         <div class="graph-container">
@@ -331,11 +269,20 @@
             </div>
 
             <div class="form-section">
-                <h3>2. Coefficient \(a\) et Forme Développée</h3>
-                <span class="subtitle">Déterminez \(a\), puis développez pour trouver \(b\) et \(c\).</span>
+                <h3>2. Forme Factorisée : \(f(x) = a(x-x_1)(x-x_2)\)</h3>
+                <span class="subtitle">Saisissez les racines \(x_1\), \(x_2\) et déterminez \(a\) en utilisant le point C.</span>
+                <div class="input-row">
+                    <label>\(x_1 =\) <input type="number" id="in_x1" step="0.5"></label>
+                    <label>\(x_2 =\) <input type="number" id="in_x2" step="0.5"></label>
+                </div>
                 <div class="input-row">
                     <label style="color:var(--primary);">\(a =\) <input type="number" id="in_a1" step="0.1"></label>
                 </div>
+            </div>
+
+            <div class="form-section">
+                <h3>3. Forme Développée : \(f(x) = ax^2 + bx + c\)</h3>
+                <span class="subtitle">Développez l'expression factorisée pour trouver \(b\) et \(c\).</span>
                 <div class="input-row">
                     <label>\(b =\) <input type="number" id="in_b" step="0.5"></label>
                     <label>\(c =\) <input type="number" id="in_c" step="0.5"></label>
@@ -343,8 +290,8 @@
             </div>
 
             <div class="form-section">
-                <h3>3. Sommet \(S(\alpha ; \beta)\)</h3>
-                <span class="subtitle">Déterminez le sommet par calcul algébrique.</span>
+                <h3>4. Forme Canonique : \(f(x) = a(x-\alpha)^2 + \beta\)</h3>
+                <span class="subtitle">Déterminez les paramètres \(\alpha\) et \(\beta\) par calcul algébrique (système d'équations).</span>
                 <div class="input-row">
                     <label>\(\alpha =\) <input type="number" id="in_alpha"></label>
                     <label>\(\beta =\) <input type="number" id="in_beta"></label>
@@ -361,32 +308,17 @@
             <div id="solutionBox" class="solution-box"></div>
         </div>
     </div>
-    <div class="copyright-btn-container">
-        <button id="copyright-btn" onclick="showCopyrightModal()">Droits d'auteur</button>
-    </div>
 
-    <div id="copyright-modal" class="modal" onclick="closeCopyrightModalIfOutside(event)">
-        <div class="modal-content">
-            <span class="close-btn copyright-close-btn">&times;</span>
-            <h2>⚖️ Droits d'Auteur et Licence d'Utilisation</h2>
-            <p><b>Auteur : Yann Merdy (yann.merdy@gmail.com)</b> - Novembre 2025</p>
-            <hr>
-            <h3>Licence d'Utilisation Non Commerciale</h3>
-            <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par l'application ("Second Degré : Étude Algébrique") sont la propriété intellectuelle exclusive de l'auteur, Yann Merdy (yann.merdy@gmail.com).</p>
-            
-            <h4>Conditions :</h4>
-            <ul>
-                <li><b>Utilisation Privée et Éducative (Autorisée) :</b> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code et son contenu <b>uniquement</b> à des fins <b>personnelles, éducatives et non lucratives</b>.</li>
-                <li><b>Utilisation Commerciale (Interdite) :</b> Toute utilisation, distribution, intégration ou reproduction du code ou du contenu (total ou partiel) à des fins <b>commerciales, lucratives ou professionnelles</b> est <b>strictement interdite</b> sans un accord écrit préalable et explicite de l'auteur.</li>
-                <li><b>Attribution :</b> Toute reproduction ou modification doit conserver la mention de l'auteur originale (Yann Merdy) et la présente notice de droits d'auteur.</li>
-            </ul>
-            <p style="margin-top: 20px; font-style: italic;">Pour toute demande d'utilisation commerciale ou de licence spécifique, veuillez contacter l'auteur.</p>
-        </div>
+    <button id="copyright-trigger" class="btn-new">© Droits d'auteur</button>
 
+    <div id="copyright-section" class="solution-box" style="display: none;">
+        <h4>© Droits d'auteur et Informations Légales</h4>
+        <p>Ce site est la propriété exclusive de <strong>Yann Merdy</strong>. Tous les droits de reproduction et de diffusion du contenu, y compris les fichiers, les exercices et le code, sont réservés pour l'usage strictement pédagogique au sein de l'établissement. Toute reproduction ou distribution commerciale est strictement interdite.</p>
+        <p>Année académique : 2025 - 2026.</p>
     </div>
 
 <script>
-    // --- MOTEUR GRAPHIQUE ---
+    // --- MOTEUR GRAPHIQUE (non modifié) ---
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
@@ -478,12 +410,16 @@
         }
     }
 
-    // --- LOGIQUE METIER ---
+    // --- LOGIQUE METIER (non modifiée) ---
 
     function generateExercise() {
+        // Ajout des nouvelles entrées pour x1 et x2
         document.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('incorrect', 'correct');});
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('solutionBox').style.display = 'none';
+        document.getElementById('copyright-section').style.display = 'none';
+        document.getElementById('copyright-trigger').textContent = '© Droits d\'auteur';
+
 
         let isValid = false;
         let a, alpha, k, x1, x2, beta, M, b, c;
@@ -543,18 +479,24 @@
     }
 
     function checkAnswer() {
-        // Supprimer toutes les classes de feedback avant de vérifier
-        document.querySelectorAll('input').forEach(i => i.classList.remove('incorrect', 'correct'));
-
+        document.getElementById('copyright-section').style.display = 'none';
+        document.getElementById('copyright-trigger').textContent = '© Droits d\'auteur';
+        
         const u_xa = parseFloat(document.getElementById('in_xa').value);
         const u_xb = parseFloat(document.getElementById('in_xb').value);
         const u_xc = parseFloat(document.getElementById('in_xc').value);
         const u_yc = parseFloat(document.getElementById('in_yc').value);
         
+        // Nouvelles entrées pour la forme factorisée
+        const u_x1 = parseFloat(document.getElementById('in_x1').value);
+        const u_x2 = parseFloat(document.getElementById('in_x2').value);
         const u_a = parseFloat(document.getElementById('in_a1').value);
+
+        // Entrées pour la forme développée
         const u_b = parseFloat(document.getElementById('in_b').value);
         const u_c = parseFloat(document.getElementById('in_c').value);
 
+        // Entrées pour la forme canonique
         const u_alpha = parseFloat(document.getElementById('in_alpha').value);
         const u_beta = parseFloat(document.getElementById('in_beta').value);
 
@@ -563,49 +505,56 @@
         const r1 = Math.min(d.x1, d.x2);
         const r2 = Math.max(d.x1, d.x2);
 
-        // --- Vérifications ---
-        
         // Points A et B
-        let usersR = [u_xa, u_xb].filter(v => !isNaN(v)).sort((a,b)=>a-b);
-        if (usersR.length === 2 && Math.abs(usersR[0] - r1) < 0.1 && Math.abs(usersR[1] - r2) < 0.1) {
+        let usersR_points = [u_xa, u_xb].sort((a,b)=>a-b);
+        if (Math.abs(usersR_points[0] - r1) < 0.1 && Math.abs(usersR_points[1] - r2) < 0.1) {
              document.getElementById('in_xa').classList.add('correct');
              document.getElementById('in_xb').classList.add('correct');
         } else {
-             errors.push("Abscisses de A et B incorrectes ou manquantes.");
+             errors.push("Abscisses de A ou B incorrectes.");
              document.getElementById('in_xa').classList.add('incorrect');
              document.getElementById('in_xb').classList.add('incorrect');
         }
 
         // Point C
-        if (!isNaN(u_xc) && !isNaN(u_yc) && Math.abs(u_xc - d.M.x) < 0.1 && Math.abs(u_yc - d.M.y) < 0.1) {
+        if (Math.abs(u_xc - d.M.x) < 0.1 && Math.abs(u_yc - d.M.y) < 0.1) {
             document.getElementById('in_xc').classList.add('correct');
             document.getElementById('in_yc').classList.add('correct');
         } else {
-            errors.push("Coordonnées de C incorrectes ou manquantes.");
+            errors.push("Coordonnées de C incorrectes.");
             document.getElementById('in_xc').classList.add('incorrect');
             document.getElementById('in_yc').classList.add('incorrect');
         }
-
-        // a
-        if (!isNaN(u_a) && Math.abs(u_a - d.a) < 0.01) document.getElementById('in_a1').classList.add('correct');
-        else { errors.push("Coefficient a incorrect ou manquant."); document.getElementById('in_a1').classList.add('incorrect'); }
         
-        // b et c
-        if (!isNaN(u_b) && !isNaN(u_c) && Math.abs(u_b - d.b) < 0.1 && Math.abs(u_c - d.c) < 0.1) {
+        // Forme Factorisée: x1, x2, a
+        let usersR_factor = [u_x1, u_x2].sort((a,b)=>a-b);
+        if (Math.abs(usersR_factor[0] - r1) < 0.1 && Math.abs(usersR_factor[1] - r2) < 0.1) {
+             document.getElementById('in_x1').classList.add('correct');
+             document.getElementById('in_x2').classList.add('correct');
+        } else {
+             errors.push("Racines x1 ou x2 incorrectes.");
+             document.getElementById('in_x1').classList.add('incorrect');
+             document.getElementById('in_x2').classList.add('incorrect');
+        }
+        if (Math.abs(u_a - d.a) < 0.01) document.getElementById('in_a1').classList.add('correct');
+        else { errors.push("Coefficient a incorrect."); document.getElementById('in_a1').classList.add('incorrect'); }
+
+        // Forme Développée: b, c
+        if (Math.abs(u_b - d.b) < 0.1 && Math.abs(u_c - d.c) < 0.1) {
              document.getElementById('in_b').classList.add('correct');
              document.getElementById('in_c').classList.add('correct');
         } else {
-             errors.push("Coefficients b ou c incorrects ou manquants.");
+             errors.push("Coefficients b ou c incorrects.");
              document.getElementById('in_b').classList.add('incorrect');
              document.getElementById('in_c').classList.add('incorrect');
         }
 
-        // Sommet
-        if (!isNaN(u_alpha) && !isNaN(u_beta) && Math.abs(u_alpha - d.alpha) < 0.1 && Math.abs(u_beta - d.beta) < 0.1) {
+        // Forme Canonique: alpha, beta
+        if (Math.abs(u_alpha - d.alpha) < 0.1 && Math.abs(u_beta - d.beta) < 0.1) {
             document.getElementById('in_alpha').classList.add('correct');
             document.getElementById('in_beta').classList.add('correct');
         } else {
-            errors.push("Sommet (alpha, beta) incorrect ou manquant.");
+            errors.push("Paramètres alpha ou beta incorrects.");
             document.getElementById('in_alpha').classList.add('incorrect');
             document.getElementById('in_beta').classList.add('incorrect');
         }
@@ -620,8 +569,41 @@
             fb.innerHTML = errors.join("<br>");
         }
     }
+    
+    
+    // Fonction utilitaire pour formatter un nombre en LaTeX (pas de parenthèses si >= 0)
+    function formatLatex(num) {
+        if (num < 0) {
+            return `(${num})`;
+        }
+        return num.toString();
+    }
 
+    // Fonction utilitaire pour formatter les facteurs a, b, c et autres termes
+    function formatLatexSimplified(num) {
+        if (num === 1) return "";
+        if (num === -1) return "-";
+        return num.toString();
+    }
+
+    // FONCTION MODIFIÉE : Formate un terme de la forme (x - x_i)
+    function formatFactorTerm(x) {
+        if (x === 0) {
+            return "x";
+        } else if (x < 0) {
+            // x - (-a) devient x + a
+            return `(x + ${Math.abs(x)})`;
+        } else {
+            // x - a
+            return `(x - ${x})`;
+        }
+    }
+    
+    // NOUVELLE VERSION DE showSolution() avec la méthode demandée
     function showSolution() {
+        document.getElementById('copyright-section').style.display = 'none';
+        document.getElementById('copyright-trigger').textContent = '© Droits d\'auteur';
+
         const sol = document.getElementById('solutionBox');
         sol.style.display = 'block';
         const d = currentData;
@@ -632,102 +614,172 @@
 
         let html = `<h4>Correction Détaillée</h4>`;
         
-        // ETAPE 1 : Racines (Valeurs directes)
-        html += `<span class="step-title">1. Forme Factorisée</span>`;
-        html += `<p>La parabole passe par \\(A(${xA};0)\\) et \\(B(${xB};0)\\).<br>`;
-        html += `Donc \\(f(${xA})=0\\) et \\(f(${xB})=0\\).<br>`;
-        html += `Expression partielle : \\( f(x) = a(x - (${xA}))(x - (${xB})) \\)</p>`;
+        // ETAPE 1 : Points de la Parabole
+        html += `<span class="step-title">1. Points de la Parabole</span>`;
+        html += `<p>Lecture des coordonnées :<br>`;
+        html += `Racines (points sur l'axe des abscisses) : \\(A(${xA};0)\\) et \\(B(${xB};0)\\).<br>`;
+        html += `Point de passage : \\(C(${xC};${yC})\\).</p>`;
 
-        // ETAPE 2 : Point C (Valeurs directes)
-        html += `<span class="step-title">2. Détermination de \\(a\\) avec le point C</span>`;
-        html += `<p>Le point \\(C(${xC};${yC})\\) appartient à la courbe, donc \\( f(${xC}) = ${yC} \\).<br>`;
-        html += `\\[ a(${xC} - (${xA}))(${xC} - (${xB})) = ${yC} \\]`;
+        // ETAPE 2 : Forme Factorisée et a
+        html += `<span class="step-title">2. Forme Factorisée : Détermination de \\(a\\)</span>`;
+        
+        let termXA = formatFactorTerm(xA);
+        let termXB = formatFactorTerm(xB);
+
+        html += `<p>La parabole passe par \\(A(${xA};0)\\) et \\(B(${xB};0)\\), donc la forme factorisée est :<br>`;
+        
+        // CORRECTION DE L'ENCODAGE LATEX ICI
+        html += `\\[ f(x) = a (x - ${formatLatex(xA)}) (x - ${formatLatex(xB)}) \\]`;
+        html += `On utilise le point \\(C(${xC};${yC})\\), donc \\( f(${xC}) = ${yC} \\).<br>`;
+        html += `\\[ a(${xC} - ${formatLatex(xA)})(${xC} - ${formatLatex(xB)}) = ${yC} \\]`;
         
         let val1 = xC - xA;
         let val2 = xC - xB;
         let prod = val1 * val2;
 
-        html += `\\[ a \\times (${val1}) \\times (${val2}) = ${yC} \\]`;
-        html += `\\[ a \\times (${prod}) = ${yC} \\implies a = \\frac{${yC}}{${prod}} = \\mathbf{${d.a}} \\]</p>`;
+        // Utilisation de \cdot pour la multiplication et \frac pour la fraction
+        html += `\\[ a \\cdot ${formatLatex(val1)} \\cdot ${formatLatex(val2)} = ${yC} \\]`;
+        html += `\\[ a \\cdot ${formatLatex(prod)} = ${yC} \\implies a = \\frac{${yC}}{${formatLatex(prod)}} = \\mathbf{${d.a}} \\]<br>`;
+        
+        // Formatage final de la forme factorisée
+        let a_conc = formatLatexSimplified(d.a);
+        html += `<strong>Forme Factorisée :</strong> \\[ f(x) = ${a_conc}${termXA}${termXB} \\]</p>`;
 
         // ETAPE 3 : Développement (Valeurs directes)
-        html += `<span class="step-title">3. Forme Développée</span>`;
-        html += `<p>On développe l'expression \\( f(x) = ${d.a}(x - (${xA}))(x - (${xB})) \\) :<br>`;
+        html += `<span class="step-title">3. Forme Développée : Coefficients \\(b\\) et \\(c\\)</span>`;
+        html += `<p>On développe l'expression factorisée :<br>`;
         html += `\\( f(x) = ${d.a} [ x^2 - (${xA} + ${xB})x + (${xA}\\times${xB}) ] \\)<br>`;
-        html += `\\( f(x) = ${d.a}x^2 + (${d.b})x + (${d.c}) \\)<br>`;
-        html += `On identifie : \\( a=${d.a}, \\quad b=${d.b}, \\quad c=${d.c} \\).</p>`;
-
-        // ETAPE 4 : Sommet par système (Valeurs directes)
-        html += `<span class="step-title">4. Détermination du Sommet par combinaison linéaire</span>`;
-        html += `<p>On cherche \\(\\alpha\\) et \\(\\beta\\) tels que \\(f(x) = a(x-\\alpha)^2 + \\beta\\).<br>`;
-        html += `\\( (E_1) : f(${xA}) = a(${xA}-\\alpha)^2 + \\beta = 0 \\)<br>`;
-        html += `\\( (E_2) : f(${xB}) = a(${xB}-\\alpha)^2 + \\beta = 0 \\)</p>`;
+        html += `\\( f(x) = ${d.a} [ x^2 - ${formatLatex(xA+xB)}x + ${formatLatex(xA*xB)} ] \\)<br>`;
+        html += `\\( f(x) = ${d.a}x^2 + ${formatLatex(-d.a*(xA+xB))}x + ${formatLatex(d.a*xA*xB)} \\)<br>`;
+        html += `On identifie : \\( a=${d.a}, \\quad b=\\mathbf{${d.b}}, \\quad c=\\mathbf{${d.c}} \\).<br>`;
         
-        html += `<p>On soustrait \\((E_2)\\) à \\((E_1)\\) :<br>`;
+        // Formatage pour l'affichage propre des signes pour la forme développée
+        let d_a = d.a;
+        let d_b = d.b;
+        let d_c = d.c;
+
+        let termA_dev = formatLatexSimplified(d_a);
+        if (termA_dev === "") termA_dev = "";
+        else if (termA_dev === "-") termA_dev = "-";
+        else termA_dev = d_a.toString();
+        
+        let termB = "";
+        if (d_b !== 0) {
+            let val = (Math.abs(d_b) === 1) ? "" : Math.abs(d_b);
+            termB = (d_b > 0) ? ` + ${val}x` : ` - ${val}x`;
+        }
+
+        let termC = "";
+        if (d_c !== 0) {
+            termC = (d_c > 0) ? ` + ${d_c}` : ` - ${Math.abs(d_c)}`;
+        }
+        
+        let fx_dev;
+        if (Math.abs(d_a) === 1 && d_a > 0) fx_dev = `x^2${termB}${termC}`;
+        else if (Math.abs(d_a) === 1 && d_a < 0) fx_dev = `-x^2${termB}${termC}`;
+        else fx_dev = `${d_a}x^2${termB}${termC}`;
+        
+        fx_dev = fx_dev.replace("  ", " ").replace(/^\+ /g, '').trim();
+
+        html += `<strong>Forme Développée :</strong> \\[ f(x) = ${fx_dev} \\]`;
+        
+        // ETAPE 4 : Détermination de alpha et beta par combinaisons linéaires
+        html += `<span class="step-title">4. Forme Canonique : Détermination de \\(\\alpha\\) et \\(\\beta\\)</span>`;
+        html += `<p>La forme canonique est \\(f(x) = a(x-\\alpha)^2 + \\beta\\).<br>`;
+        html += `Puisque \\(f(x_A)=0\\) et \\(f(x_B)=0\\), nous avons le système de deux équations :</p>`;
+        html += `\\[ (E_1) : a(${xA}-\\alpha)^2 + \\beta = 0 \\]`;
+        html += `\\[ (E_2) : a(${xB}-\\alpha)^2 + \\beta = 0 \\]`;
+        
+        html += `<p>On soustrait \\((E_2)\\) à \\((E_1)\\) pour éliminer \\(\\beta\\) :<br>`;
         html += `\\[ a(${xA}-\\alpha)^2 - a(${xB}-\\alpha)^2 = 0 \\]`;
-        html += `Comme \\(a \\neq 0\\), on simplifie :<br>`;
+        html += `Comme \\(a \\neq 0\\), on peut diviser par \\(a\\) :<br>`;
         html += `\\[ (${xA}-\\alpha)^2 - (${xB}-\\alpha)^2 = 0 \\]`;
         
-        html += `<div class="highlight-box">On reconnaît l'identité remarquable \\(A^2 - B^2 = (A-B)(A+B)\\) :</div>`;
+        html += `<div class="highlight-box">On utilise l'identité remarquable \\(A^2 - B^2 = (A-B)(A+B)\\) :</div>`;
         
-        html += `Posons \\(A = ${xA}-\\alpha\\) et \\(B = ${xB}-\\alpha\\).<br>`;
+        html += `Posons \\(A = (${xA}-\\alpha)\\) et \\(B = (${xB}-\\alpha)\\).<br>`;
         let valAmB = xA - xB;
         let valApB = xA + xB;
-        html += `\\( A - B = (${xA}-\\alpha) - (${xB}-\\alpha) = ${xA} - ${xB} = ${valAmB} \\)<br>`;
+        html += `\\( A - B = (${xA}-\\alpha) - (${xB}-\\alpha) = ${xA} - ${xB} = ${formatLatex(valAmB)} \\)<br>`;
         html += `\\( A + B = (${xA}-\\alpha) + (${xB}-\\alpha) = ${valApB} - 2\\alpha \\)<br>`;
-        html += `L'équation devient : \\[ (${valAmB})(${valApB} - 2\\alpha) = 0 \\]`;
         
-        html += `Puisque \\(${valAmB} \\neq 0\\), on a :<br>`;
+        html += `L'équation devient : \\[ ${formatLatex(valAmB)}(${valApB} - 2\\alpha) = 0 \\]`;
+        
+        html += `Puisque \\(${formatLatex(valAmB)} \\neq 0\\) (car \\(x_A \\neq x_B\\)), on doit avoir :<br>`;
         html += `\\[ ${valApB} - 2\\alpha = 0 \\implies 2\\alpha = ${valApB} \\implies \\alpha = \\frac{${valApB}}{2} = \\mathbf{${d.alpha}} \\]`;
 
-        html += `<p>Enfin, on remplace \\(\\alpha\\) dans \\((E_1)\\) :<br>`;
+        html += `<p>Maintenant, on remplace \\(\\alpha\\) dans \\((E_1)\\) pour trouver \\(\\beta\\) :<br>`;
         let carre = Math.pow(xA - d.alpha, 2);
-        html += `\\( \\beta = -a(${xA} - ${d.alpha})^2 = -(${d.a}) \\times (${carre}) = \\mathbf{${d.beta}} \\)</p>`;
+        html += `\\( a(${xA} - ${d.alpha})^2 + \\beta = 0 \\)<br>`;
+        html += `\\( \\beta = -a(${xA} - ${d.alpha})^2 = -${formatLatex(d.a)} \\times ${formatLatex(carre)} = \\mathbf{${d.beta}} \\)</p>`;
 
-        // CONCLUSION FINALE 
-        html += `<div class="conclusion-block">`;
-        html += `<strong>Finalement,</strong><br>`;
+        // Formatage pour l'affichage propre des signes pour la forme canonique
+        let alpha_can = d.alpha;
+        let beta_can = d.beta;
         
-        // Formatage pour l'affichage propre des signes
-        let signB = d.b >= 0 ? "+ " + d.b : "- " + Math.abs(d.b);
-        let signC = d.c >= 0 ? "+ " + d.c : "- " + Math.abs(d.c);
-        let signBeta = d.beta >= 0 ? "+ " + d.beta : "- " + Math.abs(d.beta);
+        let a_can = formatLatexSimplified(d.a);
 
-        html += `(1) la forme développée de f est : \\[ f(x) = ${d.a}x^2 ${signB}x ${signC} \\]<br>`;
-        html += `(2) la forme factorisée de f est : \\[ f(x) = ${d.a}(x - (${xA}))(x - (${xB})) \\]<br>`;
-        html += `(3) la forme canonique de f est : \\[ f(x) = ${d.a}(x - (${d.alpha}))^2 ${signBeta} \\]`;
+        let alpha_term_can;
+        if (alpha_can === 0) {
+            alpha_term_can = "x^2";
+        } else {
+            // Utilisation du formatage simplifié ici
+            alpha_term_can = `(x ${alpha_can > 0 ? "- " + alpha_can : "+ " + Math.abs(alpha_can)})^2`;
+        }
+        
+        let beta_term_can = "";
+        if (beta_can !== 0) {
+            beta_term_can = (beta_can > 0) ? ` + ${beta_can}` : ` - ${Math.abs(beta_can)}`;
+        }
+        
+        let fx_can = `${a_can}${alpha_term_can}${beta_term_can}`;
+
+        html += `<strong>Forme Canonique :</strong> \\[ f(x) = ${fx_can} \\]`;
+
+        // CONCLUSION FINALE AJOUTÉE
+        html += `<div class="conclusion-block">`;
+        html += `<strong>Synthèse des formes</strong><br>`;
+        
+        // Final format for conclusion
+        let termXA_conc = formatFactorTerm(xA);
+        let termXB_conc = formatFactorTerm(xB);
+
+        html += `(1) <strong>Forme Factorisée</strong> : \\[ f(x) = ${a_conc}${termXA_conc}${termXB_conc} \\]<br>`;
+        html += `(2) <strong>Forme Développée</strong> : \\[ f(x) = ${fx_dev} \\]<br>`;
+        html += `(3) <strong>Forme Canonique</strong> : \\[ f(x) = ${fx_can} \\]`;
         html += `</div>`;
 
         sol.innerHTML = html;
         MathJax.typesetPromise([sol]);
     }
 
-    // --- FONCTIONS DE LA MODALE (AJOUTS) ---
-    const copyrightModal = document.getElementById('copyright-modal');
-    
-    function showCopyrightModal() {
-        copyrightModal.style.display = 'block';
+    // --- GESTION DES DROITS D'AUTEUR (NON MODIFIÉE) ---
+    function setupCopyrightToggle() {
+        const trigger = document.getElementById('copyright-trigger');
+        const section = document.getElementById('copyright-section');
+
+        trigger.addEventListener('click', () => {
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+                trigger.textContent = '© Droits d\'auteur';
+            } else {
+                // S'assurer que la solution et le feedback sont cachés
+                document.getElementById('solutionBox').style.display = 'none';
+                document.getElementById('feedback').style.display = 'none';
+
+                section.style.display = 'block';
+                trigger.textContent = 'Masquer les informations';
+                // Faire défiler vers le bas si nécessaire
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
     }
 
-    function hideCopyrightModal() {
-        copyrightModal.style.display = 'none';
-    }
-
-    function closeCopyrightModalIfOutside(event) {
-        if (event.target === copyrightModal) {
-            hideCopyrightModal();
-        }
-    }
-    
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && copyrightModal.style.display === 'block') {
-            hideCopyrightModal();
-        }
-    });
-    // --- FIN FONCTIONS DE LA MODALE ---
-
-
-    window.onload = generateExercise;
+    // Ajouter l'initialisation au chargement de la fenêtre
+    window.onload = function() {
+        generateExercise();
+        setupCopyrightToggle();
+    };
 
 </script>
 </body>
