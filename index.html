@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Degré : Étude Algébrique Complète</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+
+    <style>
+        :root {
+            --primary: #4338ca;       /* Indigo soutenu */
+            --secondary: #0ea5e9;     /* Cyan */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --success: #10b981;
+            --error: #ef4444;
+            --text-main: #334155;
+            --highlight: #fef3c7;
+            --highlight-border: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 10px; text-align: center; font-size: 1.8rem;}
+        p.intro { max-width: 800px; text-align: center; line-height: 1.6; margin-bottom: 30px; color: #64748b; }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Graphique */
+        .graph-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: crosshair;
+            background-color: #fff;
+        }
+
+        /* Panneau Questions */
+        .questions-container {
+            flex: 1;
+            min-width: 400px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .form-section:last-child { border-bottom: none; }
+
+        h3 { margin-top: 0; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .subtitle { font-size: 0.9rem; color: #94a3b8; margin: -5px 0 15px 0; display: block; }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        label { font-weight: 600; font-size: 0.95rem; color: #475569; }
+
+        input[type="number"] {
+            width: 75px;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+        input[type="number"]:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+        input:disabled { background-color: #f8fafc; color: #cbd5e1; border-color: #f1f5f9; }
+
+        /* Boutons */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        button:active { transform: scale(0.98); }
+
+        .btn-check { background-color: var(--primary); color: white; box-shadow: 0 4px 6px rgba(67, 56, 202, 0.3); }
+        .btn-check:hover { background-color: #3730a3; }
+        
+        .btn-new { background-color: white; color: #475569; border: 2px solid #e2e8f0; }
+        .btn-new:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+        
+        .btn-sol { background-color: #fff1f2; color: var(--error); border: 1px solid #fecdd3; }
+        .btn-sol:hover { background-color: #ffe4e6; }
+
+        /* Feedback & Solution */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .correct { background-color: #d1fae5; color: #065f46; border: 1px solid #34d399; }
+        .incorrect { background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+
+        .solution-box {
+            margin-top: 30px;
+            background-color: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--primary);
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .highlight-box {
+            background-color: var(--highlight);
+            border-left: 4px solid var(--highlight-border);
+            color: #92400e;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        
+        .step-title {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            display: block;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 5px;
+        }
+
+        .conclusion-block {
+            margin-top: 30px;
+            background-color: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 15px;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Second Degré : Étude Algébrique</h1>
+    <p class="intro">
+        On considère la parabole passant par les points \(A\) et \(B\) sur l'axe des abscisses, et par un point \(C\) quelconque.<br>
+        <strong>Objectif :</strong> Retrouver l'expression complète de la fonction et déterminer le sommet par la méthode algébrique (système d'équations).
+    </p>
+
+    <div class="container">
+        <div class="graph-container">
+            <canvas id="myCanvas" width="500" height="500"></canvas>
+        </div>
+
+        <div class="questions-container">
+            
+            <div class="form-section">
+                <h3>1. Points A, B et C</h3>
+                <span class="subtitle">Relevez les abscisses des points \(A\) et \(B\) (rouge) et les coordonnées de \(C\) (vert).</span>
+                <div class="input-row">
+                    <label>\(x_A =\) <input type="number" id="in_xa"></label>
+                    <label>\(x_B =\) <input type="number" id="in_xb"></label>
+                </div>
+                <div class="input-row">
+                    <label>\(x_C =\) <input type="number" id="in_xc"></label>
+                    <label>\(y_C =\) <input type="number" id="in_yc"></label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>2. Coefficient \(a\) et Forme Développée</h3>
+                <span class="subtitle">Déterminez \(a\), puis développez pour trouver \(b\) et \(c\).</span>
+                <div class="input-row">
+                    <label style="color:var(--primary);">\(a =\) <input type="number" id="in_a1" step="0.1"></label>
+                </div>
+                <div class="input-row">
+                    <label>\(b =\) <input type="number" id="in_b" step="0.5"></label>
+                    <label>\(c =\) <input type="number" id="in_c" step="0.5"></label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>3. Sommet \(S(\alpha ; \beta)\)</h3>
+                <span class="subtitle">Déterminez le sommet par calcul algébrique.</span>
+                <div class="input-row">
+                    <label>\(\alpha =\) <input type="number" id="in_alpha"></label>
+                    <label>\(\beta =\) <input type="number" id="in_beta"></label>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-check" onclick="checkAnswer()">Vérifier</button>
+                <button class="btn-new" onclick="generateExercise()">Nouveau</button>
+                <button class="btn-sol" onclick="showSolution()">Solution Détaillée</button>
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+            <div id="solutionBox" class="solution-box"></div>
+        </div>
+    </div>
+
+<script>
+    // --- MOTEUR GRAPHIQUE ---
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 25; 
+    const originX = width / 2;
+    const originY = height / 2;
+
+    let currentData = {};
+
+    function drawGrid() {
+        ctx.clearRect(0, 0, width, height);
+        
+        // Grille
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= width; x += scale) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+        }
+        for (let y = 0; y <= height; y += scale) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+
+        // Nombres
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        for (let i = -9; i <= 9; i++) {
+            if (i === 0) continue;
+            let x = originX + i * scale;
+            ctx.beginPath(); ctx.moveTo(x, originY - 4); ctx.lineTo(x, originY + 4); ctx.stroke();
+            if(Math.abs(i)%2!==0) ctx.fillText(i, x, originY + 8);
+
+            let y = originY - i * scale;
+            ctx.beginPath(); ctx.moveTo(originX - 4, y); ctx.lineTo(originX + 4, y); ctx.stroke();
+            if(Math.abs(i)%2!==0) ctx.fillText(i, originX - 15, y - 5);
+        }
+        ctx.fillText("O", originX - 10, originY + 5);
+    }
+
+    function drawParabola(a, x1, x2) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#4338ca'; 
+        ctx.lineWidth = 3;
+        
+        let start = true;
+        for (let px = 0; px <= width; px += 2) {
+            let x = (px - originX) / scale;
+            let y = a * (x - x1) * (x - x2);
+            let py = originY - y * scale;
+            
+            if (py > -50 && py < height + 50) {
+                if (start) { ctx.moveTo(px, py); start = false; }
+                else { ctx.lineTo(px, py); }
+            }
+        }
+        ctx.stroke();
+    }
+
+    function drawPoint(x, y, color, label) {
+        let px = originX + x * scale;
+        let py = originY - y * scale;
+        
+        ctx.beginPath();
+        ctx.arc(px, py + 2, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (label) {
+            ctx.fillStyle = '#1e293b'; 
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(label, px + 12, py - 12);
+        }
+    }
+
+    // --- LOGIQUE METIER ---
+
+    function generateExercise() {
+        document.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('incorrect', 'correct');});
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('solutionBox').style.display = 'none';
+
+        let isValid = false;
+        let a, alpha, k, x1, x2, beta, M, b, c;
+
+        let safety = 0;
+        while (!isValid && safety < 500) {
+            safety++;
+            const possibleA = [1, -1, 0.5, -0.5, 2, -2]; 
+            a = possibleA[Math.floor(Math.random() * possibleA.length)];
+            alpha = Math.floor(Math.random() * 9) - 4; 
+
+            // Ecart k pour racines entières
+            if (Math.abs(a) === 0.5) k = 2 * (Math.floor(Math.random() * 3) + 1);
+            else k = Math.floor(Math.random() * 4) + 1;
+
+            x1 = alpha - k;
+            x2 = alpha + k;
+            beta = -a * k * k;
+
+            // Limites graphiques
+            if (Math.abs(x1) > 9.5 || Math.abs(x2) > 9.5 || Math.abs(beta) > 9.5) continue;
+
+            // Recherche du Point C (M)
+            let validPoints = [];
+            for (let x = -9; x <= 9; x++) {
+                if (x === x1 || x === x2) continue;
+                let y = a * (x - x1) * (x - x2);
+                if (Number.isInteger(y) && Math.abs(y) <= 9.5) {
+                    validPoints.push({x: x, y: y});
+                }
+            }
+
+            if (validPoints.length > 0) {
+                M = validPoints[Math.floor(Math.random() * validPoints.length)];
+                
+                // Forme développée
+                b = -a * (x1 + x2);
+                c = a * x1 * x2;
+                
+                isValid = true;
+            }
+        }
+
+        currentData = { a, x1, x2, alpha, beta, M, b, c };
+
+        drawGrid();
+        drawParabola(a, x1, x2);
+        
+        // Racines A et B (On trie pour que A soit à gauche)
+        let r1 = Math.min(x1, x2);
+        let r2 = Math.max(x1, x2);
+        drawPoint(r1, 0, '#ef4444', 'A'); 
+        drawPoint(r2, 0, '#ef4444', 'B'); 
+        
+        // Point C
+        drawPoint(M.x, M.y, '#10b981', 'C'); 
+    }
+
+    function checkAnswer() {
+        const u_xa = parseFloat(document.getElementById('in_xa').value);
+        const u_xb = parseFloat(document.getElementById('in_xb').value);
+        const u_xc = parseFloat(document.getElementById('in_xc').value);
+        const u_yc = parseFloat(document.getElementById('in_yc').value);
+        
+        const u_a = parseFloat(document.getElementById('in_a1').value);
+        const u_b = parseFloat(document.getElementById('in_b').value);
+        const u_c = parseFloat(document.getElementById('in_c').value);
+
+        const u_alpha = parseFloat(document.getElementById('in_alpha').value);
+        const u_beta = parseFloat(document.getElementById('in_beta').value);
+
+        let errors = [];
+        const d = currentData;
+        const r1 = Math.min(d.x1, d.x2);
+        const r2 = Math.max(d.x1, d.x2);
+
+        // Points A et B
+        let usersR = [u_xa, u_xb].sort((a,b)=>a-b);
+        if (Math.abs(usersR[0] - r1) < 0.1 && Math.abs(usersR[1] - r2) < 0.1) {
+             document.getElementById('in_xa').classList.add('correct');
+             document.getElementById('in_xb').classList.add('correct');
+        } else {
+             errors.push("Abscisses de A ou B incorrectes.");
+             document.getElementById('in_xa').classList.add('incorrect');
+             document.getElementById('in_xb').classList.add('incorrect');
+        }
+
+        // Point C
+        if (Math.abs(u_xc - d.M.x) < 0.1 && Math.abs(u_yc - d.M.y) < 0.1) {
+            document.getElementById('in_xc').classList.add('correct');
+            document.getElementById('in_yc').classList.add('correct');
+        } else {
+            errors.push("Coordonnées de C incorrectes.");
+            document.getElementById('in_xc').classList.add('incorrect');
+            document.getElementById('in_yc').classList.add('incorrect');
+        }
+
+        // a, b, c
+        if (Math.abs(u_a - d.a) < 0.01) document.getElementById('in_a1').classList.add('correct');
+        else { errors.push("Coefficient a incorrect."); document.getElementById('in_a1').classList.add('incorrect'); }
+        
+        if (Math.abs(u_b - d.b) < 0.1 && Math.abs(u_c - d.c) < 0.1) {
+             document.getElementById('in_b').classList.add('correct');
+             document.getElementById('in_c').classList.add('correct');
+        } else {
+             errors.push("Coefficients b ou c incorrects.");
+             document.getElementById('in_b').classList.add('incorrect');
+             document.getElementById('in_c').classList.add('incorrect');
+        }
+
+        // Sommet
+        if (Math.abs(u_alpha - d.alpha) < 0.1 && Math.abs(u_beta - d.beta) < 0.1) {
+            document.getElementById('in_alpha').classList.add('correct');
+            document.getElementById('in_beta').classList.add('correct');
+        } else {
+            errors.push("Sommet (alpha, beta) incorrect.");
+            document.getElementById('in_alpha').classList.add('incorrect');
+            document.getElementById('in_beta').classList.add('incorrect');
+        }
+
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'block';
+        if (errors.length === 0) {
+            fb.className = 'feedback correct';
+            fb.innerHTML = "✨ Bravo ! Tout est juste.";
+        } else {
+            fb.className = 'feedback incorrect';
+            fb.innerHTML = errors.join("<br>");
+        }
+    }
+
+    function showSolution() {
+        const sol = document.getElementById('solutionBox');
+        sol.style.display = 'block';
+        const d = currentData;
+        const xA = Math.min(d.x1, d.x2);
+        const xB = Math.max(d.x1, d.x2);
+        const xC = d.M.x;
+        const yC = d.M.y;
+
+        let html = `<h4>Correction Détaillée</h4>`;
+        
+        // ETAPE 1 : Racines (Valeurs directes)
+        html += `<span class="step-title">1. Forme Factorisée</span>`;
+        html += `<p>La parabole passe par \\(A(${xA};0)\\) et \\(B(${xB};0)\\).<br>`;
+        html += `Donc \\(f(${xA})=0\\) et \\(f(${xB})=0\\).<br>`;
+        html += `Expression partielle : \\( f(x) = a(x - (${xA}))(x - (${xB})) \\)</p>`;
+
+        // ETAPE 2 : Point C (Valeurs directes)
+        html += `<span class="step-title">2. Détermination de \\(a\\) avec le point C</span>`;
+        html += `<p>Le point \\(C(${xC};${yC})\\) appartient à la courbe, donc \\( f(${xC}) = ${yC} \\).<br>`;
+        html += `\\[ a(${xC} - (${xA}))(${xC} - (${xB})) = ${yC} \\]`;
+        
+        let val1 = xC - xA;
+        let val2 = xC - xB;
+        let prod = val1 * val2;
+
+        html += `\\[ a \\times (${val1}) \\times (${val2}) = ${yC} \\]`;
+        html += `\\[ a \\times (${prod}) = ${yC} \\implies a = \\frac{${yC}}{${prod}} = \\mathbf{${d.a}} \\]</p>`;
+
+        // ETAPE 3 : Développement (Valeurs directes)
+        html += `<span class="step-title">3. Forme Développée</span>`;
+        html += `<p>On développe l'expression \\( f(x) = ${d.a}(x - (${xA}))(x - (${xB})) \\) :<br>`;
+        html += `\\( f(x) = ${d.a} [ x^2 - (${xA} + ${xB})x + (${xA}\\times${xB}) ] \\)<br>`;
+        html += `\\( f(x) = ${d.a}x^2 + (${-d.a*(xA+xB)})x + (${d.a*xA*xB}) \\)<br>`;
+        html += `On identifie : \\( a=${d.a}, \\quad b=${d.b}, \\quad c=${d.c} \\).</p>`;
+
+        // ETAPE 4 : Sommet par système (Valeurs directes)
+        html += `<span class="step-title">4. Détermination du Sommet par combinaison linéaire</span>`;
+        html += `<p>On cherche \\(\\alpha\\) et \\(\\beta\\) tels que \\(f(x) = a(x-\\alpha)^2 + \\beta\\).<br>`;
+        html += `\\( (E_1) : f(${xA}) = a(${xA}-\\alpha)^2 + \\beta = 0 \\)<br>`;
+        html += `\\( (E_2) : f(${xB}) = a(${xB}-\\alpha)^2 + \\beta = 0 \\)</p>`;
+        
+        html += `<p>On soustrait \\((E_2)\\) à \\((E_1)\\) :<br>`;
+        html += `\\[ a(${xA}-\\alpha)^2 - a(${xB}-\\alpha)^2 = 0 \\]`;
+        html += `Comme \\(a \\neq 0\\), on simplifie :<br>`;
+        html += `\\[ (${xA}-\\alpha)^2 - (${xB}-\\alpha)^2 = 0 \\]`;
+        
+        html += `<div class="highlight-box">On reconnaît l'identité remarquable \\(A^2 - B^2 = (A-B)(A+B)\\) :</div>`;
+        
+        html += `Posons \\(A = ${xA}-\\alpha\\) et \\(B = ${xB}-\\alpha\\).<br>`;
+        let valAmB = xA - xB;
+        let valApB = xA + xB;
+        html += `\\( A - B = (${xA}-\\alpha) - (${xB}-\\alpha) = ${xA} - ${xB} = ${valAmB} \\)<br>`;
+        html += `\\( A + B = (${xA}-\\alpha) + (${xB}-\\alpha) = ${valApB} - 2\\alpha \\)<br>`;
+        html += `L'équation devient : \\[ (${valAmB})(${valApB} - 2\\alpha) = 0 \\]`;
+        
+        html += `Puisque \\(${valAmB} \\neq 0\\), on a :<br>`;
+        html += `\\[ ${valApB} - 2\\alpha = 0 \\implies 2\\alpha = ${valApB} \\implies \\alpha = \\frac{${valApB}}{2} = \\mathbf{${d.alpha}} \\]`;
+
+        html += `<p>Enfin, on remplace \\(\\alpha\\) dans \\((E_1)\\) :<br>`;
+        let carre = Math.pow(xA - d.alpha, 2);
+        html += `\\( \\beta = -a(${xA} - ${d.alpha})^2 = -(${d.a}) \\times (${carre}) = \\mathbf{${d.beta}} \\)</p>`;
+
+        // CONCLUSION FINALE AJOUTÉE
+        html += `<div class="conclusion-block">`;
+        html += `<strong>Finalement,</strong><br>`;
+        
+        // Formatage pour l'affichage propre des signes
+        let signB = d.b >= 0 ? "+ " + d.b : "- " + Math.abs(d.b);
+        let signC = d.c >= 0 ? "+ " + d.c : "- " + Math.abs(d.c);
+        let signBeta = d.beta >= 0 ? "+ " + d.beta : "- " + Math.abs(d.beta);
+
+        html += `(1) la forme développée de f est : \\[ f(x) = ${d.a}x^2 ${signB}x ${signC} \\]<br>`;
+        html += `(2) la forme factorisée de f est : \\[ f(x) = ${d.a}(x - (${xA}))(x - (${xB})) \\]<br>`;
+        html += `(3) la forme canonique de f est : \\[ f(x) = ${d.a}(x - (${d.alpha}))^2 ${signBeta} \\]`;
+        html += `</div>`;
+
+        sol.innerHTML = html;
+        MathJax.typesetPromise([sol]);
+    }
+
+    window.onload = generateExercise;
+
+</script>
+</body>
+</html>
