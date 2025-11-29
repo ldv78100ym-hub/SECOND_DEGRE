@@ -28,6 +28,12 @@
             --info-bg: #e3f2fd; /* Light blue */
             --info-border: #64b5f6;
             --info-text: #1976d2;
+            
+            /* Couleurs pour le bouton et la modale */
+            --footer-text-color: #777;
+            --modal-bg: rgba(0, 0, 0, 0.5);
+            --modal-content-bg: #ffffff;
+            --close-btn-color: #aaa;
         }
 
         body {
@@ -41,7 +47,7 @@
 
         .quiz-container {
             max-width: 900px;
-            margin: 30px auto;
+            margin: 30px auto 10px auto; /* Marge ajustée en bas */
             background: var(--card-background);
             padding: 40px;
             border-radius: 12px;
@@ -257,6 +263,79 @@
                 justify-content: space-around;
             }
         }
+        
+        /* --- STYLES POUR LE BOUTON ET LA MODALE --- */
+        .copyright-btn-container {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            text-align: center;
+        }
+        
+        #copyright-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-top: 20px;
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        #copyright-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        /* Style de la boîte modale (fenêtre flottante) */
+        .modal {
+            display: none; /* Cachée par défaut */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--modal-bg); /* Fond semi-transparent */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: var(--modal-content-bg);
+            margin: 5% auto; /* 5% du haut et centré horizontalement */
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            width: 80%; /* Largeur de la modale */
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            color: var(--close-btn-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
@@ -277,6 +356,30 @@
     </div>
     
     <div id="results" class="result-message"></div>
+</div>
+
+<div class="copyright-btn-container">
+    <button id="copyright-btn" onclick="showCopyrightModal()">Droits d'auteur</button>
+</div>
+
+<div id="copyright-modal" class="modal" onclick="closeCopyrightModalIfOutside(event)">
+    <div class="modal-content">
+            <span class="close-btn copyright-close-btn">&times;</span>
+            <h2>⚖️ Droits d'Auteur et Licence d'Utilisation</h2>
+            <p><b>Auteur : Yann Merdy (yann.merdy@gmail.com)</b> - Novembre 2025</p>
+            <hr>
+            <h3>Licence d'Utilisation Non Commerciale</h3>
+            <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par l'application ("QCM : Formes Quadratiques et Identités Remarquables") sont la propriété intellectuelle exclusive de l'auteur, Yann Merdy (yann.merdy@gmail.com).</p>
+            
+            <h4>Conditions :</h4>
+            <ul>
+                <li><b>Utilisation Privée et Éducative (Autorisée) :</b> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code et son contenu <b>uniquement</b> à des fins <b>personnelles, éducatives et non lucratives</b>.</li>
+                <li><b>Utilisation Commerciale (Interdite) :</b> Toute utilisation, distribution, intégration ou reproduction du code ou du contenu (total ou partiel) à des fins <b>commerciales, lucratives ou professionnelles</b> est <b>strictement interdite</b> sans un accord écrit préalable et explicite de l'auteur.</li>
+                <li><b>Attribution :</b> Toute reproduction ou modification doit conserver la mention de l'auteur originale (Yann Merdy) et la présente notice de droits d'auteur.</li>
+            </ul>
+            <p style="margin-top: 20px; font-style: italic;">Pour toute demande d'utilisation commerciale ou de licence spécifique, veuillez contacter l'auteur.</p>
+        </div>
+
 </div>
 
 <script>
@@ -394,6 +497,31 @@
     const restartBtn = document.getElementById('restart-btn');
     const rationaleDisplay = document.getElementById('rationale-display');
     const quizStatus = document.getElementById('quiz-status');
+    const copyrightModal = document.getElementById('copyright-modal');
+
+
+    // --- FONCTIONS DE LA MODALE ---
+    function showCopyrightModal() {
+        copyrightModal.style.display = 'block';
+    }
+
+    function hideCopyrightModal() {
+        copyrightModal.style.display = 'none';
+    }
+
+    function closeCopyrightModalIfOutside(event) {
+        if (event.target === copyrightModal) {
+            hideCopyrightModal();
+        }
+    }
+    
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && copyrightModal.style.display === 'block') {
+            hideCopyrightModal();
+        }
+    });
+    // --- FIN FONCTIONS DE LA MODALE ---
+
 
     function updateStatus() {
         if (currentQuestionIndex < questions.length) {
@@ -434,7 +562,7 @@
         `;
         quizDiv.innerHTML = qCardHtml;
 
-        // Force le rendu MathJax pour la nouvelle question
+        // Forcer le rendu MathJax APRÈS que le contenu a été inséré
         if (window.MathJax) {
             MathJax.typesetPromise([quizDiv]); 
         }
@@ -491,7 +619,7 @@
         submitBtn.style.display = 'none';
         nextBtn.style.display = 'block';
         
-        // Force le rendu MathJax pour l'explication
+        // Forcer le rendu MathJax pour l'explication après l'affichage
         if (window.MathJax) {
             MathJax.typesetPromise([rationaleDisplay]);
         }
