@@ -336,12 +336,34 @@
             margin-top: 0;
             color: var(--primary-dark);
         }
+	.btn-retour-ressources {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #f8f9fa; /* Fond clair pour le contraste */
+            color: #333; /* Texte sombre */
+            text-decoration: none; /* Enlève le soulignement */
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 10px;
+            border: 1px solid #ced4da;
+            transition: background-color 0.3s;
+            font-size: 1em;
+        }
+
+        .btn-retour-ressources:hover {
+            background-color: #e2e6ea;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
     <h1>QCM : <strong>Formes Quadratiques et Identités Remarquables</strong></h1>
+	<a href="https://ldv78100ym-hub.github.io/HOME/" class="btn-retour-ressources">
+            ⬅️ Autres ressources
+        </a>
+
     <div id="quiz-status"></div>
     <div id="quiz">
         </div>
