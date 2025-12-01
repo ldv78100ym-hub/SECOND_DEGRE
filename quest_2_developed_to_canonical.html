@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quête 2 : Développée vers Canonique</title>
+    <link rel="stylesheet" href="style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="data_and_logic.js"></script>
+</head>
+<body onload="initGame(1, 'quest_3_equation_solving.html')">
+
+<div class="container">
+    <div id="quest-level">QUÊTE 2 / 7 | ÉTAPE 1 / 3</div>
+    <div class="region-badge">
+        <span id="region-name">SECONDE DEGRÉ</span>
+    </div>
+    
+    <h1 id="mission-title">🚀 DÉFI : FORME DÉVELOPPÉE VERS CANONIQUE</h1>
+
+    <div id="mission-content" class="mission-box">
+        <p id="quest-description">Objectif de la quête.</p>
+        
+        <div class="math-display" id="function-display"></div>
+        <div id="graph-container" style="display:none;">
+            <canvas id="parabolaCanvas" width="500" height="300"></canvas>
+        </div>
+        
+        <span class="question-text" id="question-text"></span>
+    </div>
+    
+    <div class="input-group hidden" id="input-group-a">
+        <label for="input-a">Coefficient \\(a\\)</label>
+        <input type="text" id="input-a" placeholder="Ex: 2 ou -0.5">
+    </div>
+    <div class="input-group hidden" id="input-group-b">
+        <label for="input-b">Coefficient \\(b\\)</label>
+        <input type="text" id="input-b" placeholder="Ex: 5">
+    </div>
+    <div class="input-group hidden" id="input-group-c">
+        <label for="input-c">Coefficient \\(c\\) (ou f(0))</label>
+        <input type="text" id="input-c" placeholder="Ex: -1">
+    </div>
+    
+    <div class="input-group hidden" id="input-group-alpha">
+        <label for="input-alpha">Axe de symétrie \\(\alpha\\)</label>
+        <input type="text" id="input-alpha" placeholder="Ex: -3 ou 2.5">
+    </div>
+    <div class="input-group hidden" id="input-group-beta">
+        <label for="input-beta">Ordonnée du Sommet \\(\beta\\)</label>
+        <input type="text" id="input-beta" placeholder="Ex: 5 ou -1.25">
+    </div>
+
+    <div class="input-group hidden" id="input-group-x1">
+        <label for="input-x1">Borne inférieure / Racine \\(x_1\\)</label>
+        <input type="text" id="input-x1" placeholder="Ex: -1 ou 4.5">
+    </div>
+    <div class="input-group hidden" id="input-group-x2">
+        <label for="input-x2">Borne supérieure / Racine \\(x_2\\)</label>
+        <input type="text" id="input-x2" placeholder="Ex: 1 ou 5.2">
+    </div>
+    
+    <div class="input-group hidden" id="input-group-delta">
+        <label for="input-delta">Discriminant \\(\Delta\\)</label>
+        <input type="text" id="input-delta" placeholder="Ex: 25 ou 0 ou -4">
+    </div>
+    
+    <div class="input-group hidden" id="input-group-count">
+        <label for="input-count">Nombre de solutions réelles</label>
+        <select id="input-count">
+            <option value="">-- Choisir une option --</option>
+            <option value="0">0 solution</option>
+            <option value="1">1 solution</option>
+            <option value="2">2 solutions</option>
+        </select>
+    </div>
+
+     <div class="input-group hidden" id="input-group-response">
+        <label for="input-response">Sélectionnez la conséquence la plus probable :</label>
+        <select id="input-response">
+            <option value="">-- Choisir une option --</option>
+        </select>
+    </div>
+    
+    <button id="submit-btn" onclick="checkAnswers()">🔍 VÉRIFIER LA SOLUTION</button>
+    
+    <div id="feedback-area"></div>
+    
+    <button id="copyright-btn" onclick="showCopyrightModal()" style="background: #334155; margin-top: 30px; padding: 12px; font-size: 0.9em;">⚖️ Droits d'Auteur et Licence</button>
+
+</div>
+
+<div id="copyright-modal" class="modal" onclick="if(event.target.id === 'copyright-modal') hideCopyrightModal()">
+    <div class="modal-content">
+        <span class="close-btn" onclick="hideCopyrightModal()">&times;</span>
+        <h3>⚖️ Droits d'Auteur et Licence d'Utilisation</h3>
+        <p>Auteur : <strong>Yann Merdy</strong> (yann.merdy@gmail.com) - Novembre 2025</p>
+        <p><strong>Licence d'Utilisation Non Commerciale</strong></p>
+        <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par cette application sont la propriété intellectuelle exclusive de l'auteur, Yann Merdy.</p>
+        <h4>Conditions :</h4>
+        <ul>
+            <li><strong>Utilisation Privée et Éducative (Autorisée) :</strong> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code et son contenu <strong>uniquement</strong> à des fins <strong>personnelles, éducatives et non lucratives</strong>.</li>
+            <li><strong>Utilisation Commerciale (Interdite) :</strong> Toute utilisation, distribution, intégration ou reproduction du code ou du contenu (total ou partiel) à des fins <strong>commerciales, lucratives ou professionnelles</strong> est <strong>strictement interdite</strong> sans un accord écrit préalable et explicite de l'auteur.</li>
+            <li><strong>Attribution :</strong> Toute reproduction ou modification doit conserver la mention de l'auteur originale (Yann Merdy) et la présente notice de droits d'auteur.</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
