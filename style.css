@@ -199,3 +199,152 @@ button:disabled { background: #475569; cursor: not-allowed; transform: none; }
     margin-bottom: 15px;
 }
 .modal-content strong { color: var(--gold); }
+/* --- Styles pour l'animation "En Travaux" --- */
+
+#en-travaux-animation {
+    position: relative;
+    width: 100%;
+    height: 150px; /* Augmentation de la hauteur pour plus de détails */
+    overflow: hidden;
+    margin: 20px 0;
+    background: linear-gradient(to bottom, #dbeafe, #93c5fd); /* Ciel bleu */
+    border-radius: 5px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+}
+
+/* Sol et zone de creusement */
+#en-travaux-animation::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px; /* Hauteur du sol */
+    background-color: #475569; /* Sol gris foncé */
+    z-index: 1;
+}
+
+/* Simulateur de "creusement" */
+.zone-creusement {
+    position: absolute;
+    bottom: 5px; /* Au-dessus du sol */
+    left: 20%;
+    width: 60%;
+    height: 30px; /* Plus grand */
+    background-color: #6d4c41; /* Couleur de terre creusée */
+    border-radius: 50% / 100% 100% 0 0; /* Forme de monticule */
+    animation: digEffect 2s ease-in-out infinite alternate;
+    z-index: 2;
+    filter: brightness(0.9); /* Légèrement plus sombre */
+}
+
+@keyframes digEffect {
+    0% { transform: scale(1, 1); opacity: 0.8; }
+    50% { transform: scale(1.05, 1.1); opacity: 1; }
+    100% { transform: scale(1, 1); opacity: 0.8; }
+}
+
+
+/* ENGING DE CHANTIER (Mini-Pelle / Excavatrice Simplifiée) */
+.engin-chantier {
+    position: absolute;
+    bottom: 40px; /* Positionnement au-dessus du sol */
+    left: 10%;
+    width: 80px; /* Largeur du corps */
+    height: 50px; /* Hauteur du corps */
+    background-color: #f59e0b; /* Jaune vif */
+    border: 2px solid #d97706;
+    border-radius: 5px;
+    animation: moveEngin 5s linear infinite alternate;
+    z-index: 3;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* Cabine */
+.engin-chantier::before {
+    content: '';
+    position: absolute;
+    top: -20px; /* Au-dessus du corps */
+    left: 15px;
+    width: 30px;
+    height: 25px;
+    background-color: #cbd5e1; /* Gris clair pour la cabine */
+    border: 2px solid #94a3b8;
+    border-radius: 3px;
+    border-bottom: none;
+}
+
+/* Chenilles */
+.engin-chantier::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; /* Sous le corps principal */
+    left: -5px;
+    width: 90px; /* Plus large que le corps */
+    height: 20px;
+    background-color: #334155; /* Gris foncé pour les chenilles */
+    border-radius: 5px;
+    box-shadow: inset 0 -3px 5px rgba(0,0,0,0.5);
+    z-index: -1; /* Pour être derrière le corps */
+}
+
+/* Bras principal de la pelle */
+.engin-chantier .bras-principal {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    width: 50px; /* Longueur */
+    height: 10px; /* Épaisseur */
+    background-color: #a78bfa; /* Couleur violette/bleue pour les bras */
+    border: 2px solid #8b5cf6;
+    transform-origin: 100% 50%; /* Pivot à l'attache de l'engin */
+    animation: swingBrasPrincipal 2s ease-in-out infinite alternate;
+}
+
+/* Bras secondaire de la pelle */
+.engin-chantier .bras-secondaire {
+    position: absolute;
+    top: 0; /* Attaché à l'extrémité du bras principal */
+    right: -40px;
+    width: 40px;
+    height: 8px;
+    background-color: #c4b5fd; /* Couleur plus claire pour le bras secondaire */
+    border: 2px solid #a78bfa;
+    transform-origin: 0% 50%; /* Pivot à l'attache du bras principal */
+    animation: swingBrasSecondaire 2s ease-in-out infinite alternate;
+}
+
+/* Godet de la pelle */
+.engin-chantier .godet {
+    position: absolute;
+    top: -5px; /* Attaché à l'extrémité du bras secondaire */
+    right: -30px;
+    width: 25px;
+    height: 20px;
+    background-color: #64748b; /* Gris foncé du godet */
+    border: 2px solid #475569;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    transform-origin: 0% 100%;
+    animation: digGodet 2s ease-in-out infinite alternate;
+}
+
+@keyframes moveEngin {
+    0% { left: 10%; }
+    100% { left: 70%; } /* L'engin se déplace sur la droite */
+}
+
+@keyframes swingBrasPrincipal {
+    0% { transform: rotate(-30deg); }
+    100% { transform: rotate(-10deg); }
+}
+
+@keyframes swingBrasSecondaire {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(45deg); } /* Rotation pour simuler l'extension */
+}
+
+@keyframes digGodet {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(50deg); } /* Rotation pour simuler le creusement */
+}
