@@ -1,40 +1,534 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Degré : L'Aventure</title>
-    <link rel="stylesheet" href="style.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="data_and_logic.js"></script>
+    <title>Mathématiques - Accueil Dynamique</title>
+    
     <style>
-        .container { text-align: center; padding: 50px 30px; }
-        .start-button {
-             background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
-             color: #000;
-             padding: 20px 40px;
-             font-size: 1.5em;
-             border-radius: 10px;
-             text-transform: uppercase;
-             margin-top: 30px;
+        /* --- VARIABLES --- */
+        :root {
+            --primary-color: #4CAF50; 
+            --secondary-color: #607D8B;
+            --text-dark: #263238;
+            --container-bg: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
         }
-        .start-button:hover { filter: brightness(1.1); }
+
+        /* --- FOND D'ÉCRAN ANIMÉ --- */
+        @keyframes backgroundTransition {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex; 
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 30px; 
+            padding-bottom: 30px;
+            overflow-x: hidden; 
+            
+            background: linear-gradient(-45deg, #e0f2f1, #e3f2fd, #fce4ec, #fcfbe3); 
+            background-size: 400% 400%;
+            animation: backgroundTransition 15s ease infinite;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: var(--container-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            
+            display: flex;
+            flex-direction: column;
+            min-height: 70vh; 
+        }
+
+        /* --- FIL D'ARIANE (MENU) --- */
+        .breadcrumb {
+            margin-bottom: 30px;
+            display: flex; 
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px; 
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            z-index: 10;
+            position: relative;
+        }
+
+        .breadcrumb-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            background-color: #ffffff;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            user-select: none;
+            position: relative;
+        }
+
+        .breadcrumb-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: #e8f5e9;
+            transform: translateY(-2px);
+        }
+
+        .breadcrumb-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        .breadcrumb-btn .icon-breadcrumb {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        /* --- POP-UP D'APERÇU --- */
+        #category-popup {
+            position: absolute;
+            z-index: 100;
+            background-color: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            min-width: 250px;
+            max-width: 350px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            border: 1px solid var(--primary-color);
+            text-align: left;
+        }
+
+        #category-popup.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #category-popup h3 {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+        }
+
+        #category-popup ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #category-popup li {
+            font-size: 0.9em;
+            padding: 5px 0;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+        #category-popup li:last-child {
+            border-bottom: none;
+        }
+
+        #category-popup a {
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        #category-popup a:hover {
+            color: var(--secondary-color);
+        }
+
+
+        /* --- ZONE D'AFFICHAGE --- */
+        #display-area {
+            flex-grow: 1; 
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        /* --- VIDEO CONTAINER (MODIFIÉ) --- */
+        .anim-container {
+            position: relative;
+            /* Largeur flexible pour s'adapter à la vidéo */
+            width: 100%;
+            max-width: 600px; 
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        /* Style spécifique pour la vidéo */
+        .anim-container video {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* --- PANNEAU D'INFORMATIONS --- */
+        #info-panel {
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            text-align: left;
+            opacity: 0;
+            transform: translateX(30px);
+            animation: fadeInSlideLeft 1s ease-out forwards 0.5s;
+        }
+
+        #info-panel div {
+            margin-bottom: 15px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .info-line {
+            display: inline-block;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--primary-color);
+            text-shadow: 
+                1px 1px 0px rgba(0,0,0,0.1),
+                2px 2px 0px rgba(0,0,0,0.08),
+                3px 3px 0px rgba(0,0,0,0.05);
+            transform: rotateY(-15deg) rotateX(5deg) translateX(0);
+            transition: transform 0.3s ease-out;
+        }
+
+        .info-line:hover {
+            transform: rotateY(-10deg) rotateX(2deg) translateX(5px);
+        }
+
+        /* Animation pour le panneau d'infos */
+        @keyframes fadeInSlideLeft {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- SECTIONS CATÉGORIES --- */
+        .category-section {
+            display: none; 
+            width: 100%;
+            animation: slideUp 0.4s ease-out;
+            padding-top: 20px;
+        }
+
+        .category-section.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary-color);
+            padding-left: 15px;
+        }
+
+        /* --- LISTE DES LIENS --- */
+        .link-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .link-button {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 1px solid #eceff1;
+            border-radius: 10px; 
+            background-color: #ffffff;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .link-button:hover {
+            background-color: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.15);
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        .link-button .icon {
+            margin-right: 12px;
+            font-size: 1.4em;
+            color: var(--primary-color);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            #display-area {
+                flex-direction: column;
+                gap: 30px;
+            }
+            #info-panel {
+                text-align: center;
+                transform: translateX(0);
+                animation: fadeIn 0.8s ease-out forwards 0.5s;
+            }
+            .info-line {
+                transform: none;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            }
+            .container {
+                padding: 20px;
+                min-height: auto;
+            }
+            .anim-container {
+                /* Sur mobile, on prend toute la largeur */
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+            /* Masquer le pop-up sur les petits écrans pour éviter les problèmes de mise en page */
+            #category-popup {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📚 BIENVENUE DANS L'AVENTURE DU SECOND DEGRÉ</h1>
-    
-    <div class="mission-box" style="border-left-color: var(--gold);">
-        <p>Ce parcours est divisé en 7 quêtes principales, chacune contenant plusieurs sous-missions. Votre objectif est de réussir toutes les sous-missions d'une quête pour débloquer la suivante.</p>
-        <p>Bonne chance !</p>
+    <div class="container">
+        
+        <div id="breadcrumb" class="breadcrumb">
+            </div>
+        
+        <div id="display-area">
+            
+            <div id="welcome-screen" class="anim-container">
+                <video autoplay loop muted playsinline>
+                    <source src="animation-maths.mp4" type="video/mp4">
+                    Votre navigateur ne supporte pas la balise vidéo.
+                </video>
+            </div>
+
+            <div id="info-panel">
+                <div><span class="info-line">Auteur : Yann Merdy</span></div>
+                <div><span class="info-line">Année 2025 - 2026</span></div>
+                <div><span class="info-line">Première STL & STI2D</span></div>
+                <div><span class="info-line">TRONC COMMUN & PCM</span></div>
+            </div>
+
+            <div id="categories-container" style="width: 100%;"></div>
+
+        </div>
+        
     </div>
     
-    <a href="quest_1_canonical_to_developed.html">
-        <button class="start-button">COMMENCER LA QUÊTE 1 ➡️</button>
-    </a>
-</div>
+    <div id="category-popup"></div>
+
+    <script>
+        // --- DONNÉES ---
+        const linksData = [
+            { url: "https://ldv78100ym-hub.github.io/TABLEAUX-DE-SIGNES/", title: "Tableaux de Signes", category: "Algèbre" },
+            { url: "https://ldv78100ym-hub.github.io/FACTORISATIONS/", title: "Factorisations", category: "Algèbre" },
+            { url: "https://ldv78100ym-hub.github.io/SECOND_DEGRE/", title: "Second Degré (Général)", category: "Algèbre" },
+            { url: "https://ldv78100ym-hub.github.io/SECOND_DEGRE/index2.html", title: "Second Degré (Variante)", category: "Algèbre" },
+            { url: "https://ldv78100ym-hub.github.io/DROITES", title: "Droites (Géométrie Analytique)", category: "Analyse" },
+            { url: "https://ldv78100ym-hub.github.io/NOMBRE_DERIVE/", title: "Nombre Dérivé", category: "Analyse" },
+            { url: "https://ldv78100ym-hub.github.io/NOMBRE_DERIVE/CALCULS.html", title: "Calculs de Nombre Dérivé", category: "Analyse" },
+            { url: "https://ldv78100ym-hub.github.io/PRODUIT_SCALAIRE/", title: "Produit Scalaire", category: "Géométrie" },
+            { url: "https://ldv78100ym-hub.github.io/PROBABILITES/", title: "Probabilités", category: "Probabilités" }
+        ];
+        
+        // Regrouper les liens une seule fois au chargement pour le pop-up
+        const groupedLinks = linksData.reduce((acc, link) => {
+            if (!acc[link.category]) acc[link.category] = [];
+            acc[link.category].push(link);
+            return acc;
+        }, {});
+
+
+        // --- UTILITAIRES DE PAGE ---
+        function sanitizeId(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        }
+
+        function getCategoryIcon(category) {
+            if (category === "Algèbre") return '➗';
+            if (category === "Géométrie") return '📐';
+            if (category === "Probabilités") return '🎲';
+            return '📈';
+        }
+
+        // --- GESTION POP-UP ---
+        const popup = document.getElementById('category-popup');
+
+        function showPopup(categoryName, event) {
+            if (window.innerWidth <= 768) return; 
+
+            const links = groupedLinks[categoryName] || [];
+            if (links.length === 0) return;
+
+            let contentHTML = `<h3>${categoryName}</h3><ul>`;
+            links.forEach(link => {
+                contentHTML += `<li><a href="${link.url}" target="_blank">${link.title}</a></li>`;
+            });
+            contentHTML += `</ul>`;
+            
+            popup.innerHTML = contentHTML;
+
+            const buttonRect = event.currentTarget.getBoundingClientRect();
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            
+            const topPosition = buttonRect.bottom + window.scrollY - containerRect.top + 10;
+            const leftPosition = buttonRect.left + window.scrollX - containerRect.left;
+            
+            popup.style.top = `${topPosition}px`;
+            popup.style.left = `${leftPosition}px`;
+            
+            const popUpWidth = popup.offsetWidth;
+            const containerWidth = containerRect.width;
+
+            if (leftPosition + popUpWidth > containerWidth) {
+                popup.style.left = `${containerWidth - popUpWidth - 40}px`; 
+            }
+            
+            popup.classList.add('visible');
+        }
+
+        function hidePopup() {
+            popup.classList.remove('visible');
+        }
+
+        // --- NAVIGATION ---
+        function switchCategory(targetId) {
+            // Masquer l'écran d'accueil
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const infoPanel = document.getElementById('info-panel');
+
+            if (welcomeScreen.style.display !== 'none') {
+                welcomeScreen.style.display = 'none';
+                infoPanel.style.display = 'none';
+                // Plus besoin d'arrêter l'animation JS car elle n'existe plus
+            }
+
+            // Masquer toutes les sections
+            document.querySelectorAll('.category-section').forEach(el => el.classList.remove('active'));
+            
+            // Désactiver tous les boutons
+            document.querySelectorAll('.breadcrumb-btn').forEach(el => el.classList.remove('active'));
+
+            // Activer la section cible
+            const targetSection = document.getElementById('section-' + targetId);
+            if (targetSection) targetSection.classList.add('active');
+
+            // Activer le bouton cible
+            const targetBtn = document.getElementById('btn-' + targetId);
+            if (targetBtn) targetBtn.classList.add('active');
+        }
+
+
+        // --- INITIALISATION ---
+        function initPage() {
+            const breadcrumbContainer = document.getElementById('breadcrumb');
+            const categoriesContainer = document.getElementById('categories-container');
+            
+            categoriesContainer.innerHTML = '';
+            
+            const categories = Object.keys(groupedLinks);
+            if (categories.length === 0) return;
+
+            categories.forEach(category => {
+                const safeId = sanitizeId(category);
+                const icon = getCategoryIcon(category);
+
+                // Bouton Menu
+                const btn = document.createElement('a');
+                btn.href = "#"; 
+                btn.className = 'breadcrumb-btn';
+                btn.id = 'btn-' + safeId;
+                btn.innerHTML = `<span class="icon-breadcrumb">${icon}</span> ${category}`;
+                
+                btn.addEventListener('mouseenter', (e) => showPopup(category, e));
+                btn.addEventListener('mouseleave', hidePopup);
+                
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchCategory(safeId);
+                });
+
+                breadcrumbContainer.appendChild(btn);
+
+                // Section Contenu
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.id = 'section-' + safeId;
+
+                const title = document.createElement('h2');
+                title.textContent = category;
+                section.appendChild(title);
+
+                const ul = document.createElement('ul');
+                ul.className = 'link-list';
+
+                groupedLinks[category].forEach(link => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${link.url}" class="link-button" target="_blank">
+                            <span class="icon">${icon}</span>
+                            <span>${link.title}</span>
+                        </a>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                section.appendChild(ul);
+                categoriesContainer.appendChild(section);
+            });
+            
+            // Suppression de l'appel à initAnimation() car remplacé par la vidéo
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+
+    </script>
 
 </body>
 </html>
+
