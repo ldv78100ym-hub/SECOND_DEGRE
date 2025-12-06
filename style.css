@@ -347,4 +347,53 @@ button:disabled { background: #475569; cursor: not-allowed; transform: none; }
 @keyframes digGodet {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(50deg); } /* Rotation pour simuler le creusement */
+
+}
+/* Styles génériques des tableaux mathématiques */
+.math-tableau {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1.1em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.math-tableau th, .math-tableau td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+.math-tableau th {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+.table-title {
+    color: #007bff;
+    margin-top: 20px;
+}
+.summary {
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Styles spécifiques pour le tableau de variation */
+.variation .arrow {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.variation .up { color: #28a745; } /* Vert pour croissant */
+.variation .down { color: #dc3545; } /* Rouge pour décroissant */
+.variation .arrow-cell {
+    min-width: 50px;
+}
+
+/* Styles spécifiques pour le tableau de signes */
+.sign .sign-cell {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+.sign .sign-cell:contains('+') {
+    color: #28a745;
+}
+.sign .sign-cell:contains('-') {
+    color: #dc3545;
 }
