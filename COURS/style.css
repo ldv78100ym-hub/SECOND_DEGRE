@@ -1,0 +1,199 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --bg-color: #f8f9fa;
+    --text-color: #343a40;
+    --border-radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+h1 { margin: 0; font-size: 2em; }
+
+/* Navigation */
+#menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#menu button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+#menu button:hover {
+    background-color: #5a6268;
+}
+
+#menu button.active {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenu des parties */
+#content-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+h3 {
+    color: var(--secondary-color);
+    margin-top: 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.formula {
+    font-size: 1.1em;
+    padding: 10px;
+    margin: 15px 0;
+    background-color: #e9ecef;
+    border-left: 5px solid var(--primary-color);
+    border-radius: 4px;
+}
+
+.katex {
+    font-size: 1.2em;
+}
+
+/* Boutons d'aide */
+.help-button {
+    background-color: var(--warning-color);
+    color: var(--text-color);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.explanation-box {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border-left: 5px solid var(--warning-color);
+    border-radius: 4px;
+    display: none;
+}
+
+/* Graphique et Contrôles */
+.graph-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+}
+
+.controls-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f8ff;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.math-text {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Tableau */
+.tableau {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+.tableau th, .tableau td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+.tableau th {
+    background-color: #f1f1f1;
+}
+.up-arrow { color: var(--success-color); font-size: 1.5em; }
+.down-arrow { color: var(--danger-color); font-size: 1.5em; }
+
+/* Résolution et Formes (Partie 6) */
+.result-box {
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #e2f0ff;
+    border: 1px solid var(--primary-color);
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.form-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.identites-list {
+    list-style: none;
+    padding: 0;
+}
+.identites-list li {
+    background-color: #f3f9f3;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 5px solid var(--success-color);
+    border-radius: 4px;
+}

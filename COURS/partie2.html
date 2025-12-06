@@ -1,0 +1,29 @@
+<section id="partie-2">
+    <h2>⬅️ Partie 2 : Translation Horizontale $f_1(x) = (x-\alpha)^2$</h2>
+    
+    <p>La courbe est la parabole $y=x^2$ soumise à une **translation horizontale**.</p>
+
+    <div class="controls-group">
+        <div class="control-item">
+            <label for="alpha-value">Choisir $\alpha$ :</label>
+            <input type="range" id="alpha-value" min="-4" max="4" value="2" step="0.5" oninput="updateGraph(); showValue('alpha-display', this.value)">
+            <span id="alpha-display" class="math-text">2</span>
+        </div>
+        <button class="help-button" onclick="toggleExplanation('h-exp')">❓ Quel est l'effet de $\alpha$ ?</button>
+    </div>
+
+    <div id="h-exp" class="explanation-box">
+        La fonction $f_1(x) = (x-\alpha)^2$ est translatée horizontalement de $\alpha$.
+        <ul>
+            <li>Si $\alpha > 0$ : Décalage **vers la droite**.</li>
+            <li>Si $\alpha < 0$ : Décalage **vers la gauche**.</li>
+        </ul>
+    </div>
+    
+    <p>
+        * **Sommet :** $\mathbf{S(\alpha ; 0)}$.
+        * **Axe de symétrie :** La droite verticale d'équation $\mathbf{x=\alpha}$.
+    </p>
+
+    <div id="sketch-container" class="graph-container"></div>
+</section>

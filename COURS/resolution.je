@@ -1,0 +1,40 @@
+window.updateResolution = () => {
+    const kInput = document.getElementById('k-value');
+    if (!kInput) return;
+
+    const k = parseFloat(kInput.value);
+    const kDisplay = document.getElementById('k-display');
+    const resEq = document.getElementById('res-eq');
+    const resInInf = document.getElementById('res-in-inf');
+    const resInSup = document.getElementById('res-in-sup');
+    
+    kDisplay.innerText = k;
+
+    if (isNaN(k)) {
+        resEq.innerHTML = resInInf.innerHTML = resInSup.innerHTML = 'Erreur : k non valide';
+        return;
+    }
+
+    if (k < 0) {
+        // Cas k < 0
+        resEq.innerHTML = "\\emptyset";
+        resInInf.innerHTML = "\\emptyset";
+        resInSup.innerHTML = "\\mathbb{R}";
+    } else if (k === 0) {
+        // Cas k = 0
+        resEq.innerHTML = "\\{0\\}";
+        resInInf.innerHTML = "\\emptyset";
+        resInSup.innerHTML = "]-\\infty; 0[ \\cup ]0; +\\infty[";
+    } else {
+        // Cas k > 0
+        const sqrtK = Math.sqrt(k).toFixed(2);
+        resEq.innerHTML = `\\{ -${sqrtK}; ${sqrtK} \\}`;
+        resInInf.innerHTML = `]-${sqrtK}; ${sqrtK}[`;
+        resInSup.innerHTML = `]-\\infty; -${sqrtK}[ \\cup ]${sqrtK}; +\\infty[`;
+    }
+
+    // Mettre à jour l'affichage KaTeX
+    katex.render(resEq.innerHTML, resEq, { throwOnError: false });
+    katex.render(resInInf.innerHTML, resInInf, { throwOnError: false });
+    katex.render(resInSup.innerHTML, resInSup, { throwOnError: false });
+};

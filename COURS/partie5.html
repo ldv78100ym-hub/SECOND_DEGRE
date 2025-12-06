@@ -1,0 +1,31 @@
+<section id="partie-5">
+    <h2>⚖️ Partie 5 : Dilatation/Compression $f_4(x) = a \cdot x^2$</h2>
+    
+    <p>Le coefficient $\mathbf{a}$ modifie la forme et l'orientation de la parabole (dilatation/compression).</p>
+
+    <div class="controls-group">
+        <div class="control-item">
+            <label for="a-value">Choisir $a$ :</label>
+            <input type="range" id="a-value" min="-2" max="2" value="1" step="0.25" oninput="updateGraph(); updateSignTable(this.value); showValue('a-display', this.value)">
+            <span id="a-display" class="math-text">1</span>
+        </div>
+        <button class="help-button" onclick="toggleExplanation('a-exp')">❓ Quel est l'effet de $a$ ?</button>
+    </div>
+
+    <div id="a-exp" class="explanation-box">
+        <ul>
+            <li>Si $\mathbf{a > 0}$ : Parabole vers le **haut** (minimum).</li>
+            <li>Si $\mathbf{a < 0}$ : Parabole vers le **bas** (maximum), variations inversées.</li>
+            <li>Si $|\mathbf{a}| > 1$ : Parabole plus **resserrée** (dilatation verticale).</li>
+            <li>Si $0 < |\mathbf{a}| < 1$ : Parabole plus **évasée** (compression verticale).</li>
+        </ul>
+    </div>
+    
+    <h3>Tableau de Variation et de Signe Dynamiques</h3>
+    <p>Les tableaux ci-dessous sont mis à jour en temps réel par le JavaScript en fonction de la valeur de $\mathbf{a}$ (avec $S(0, 0)$).</p>
+
+    <div id="dynamic-tables">
+        </div>
+
+    <div id="sketch-container" class="graph-container"></div>
+</section>

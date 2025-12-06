@@ -1,0 +1,29 @@
+<section id="partie-3">
+    <h2>⬆️ Partie 3 : Translation Verticale $f_2(x) = x^2 + \beta$</h2>
+    
+    <p>La courbe est la parabole $y=x^2$ soumise à une **translation verticale**.</p>
+
+    <div class="controls-group">
+        <div class="control-item">
+            <label for="beta-value">Choisir $\beta$ :</label>
+            <input type="range" id="beta-value" min="-4" max="4" value="-1" step="0.5" oninput="updateGraph(); showValue('beta-display', this.value)">
+            <span id="beta-display" class="math-text">-1</span>
+        </div>
+        <button class="help-button" onclick="toggleExplanation('v-exp')">❓ Quel est l'effet de $\beta$ ?</button>
+    </div>
+
+    <div id="v-exp" class="explanation-box">
+        La fonction $f_2(x) = x^2 + \beta$ est translatée verticalement de $\beta$.
+        <ul>
+            <li>Si $\beta > 0$ : Décalage **vers le haut**.</li>
+            <li>Si $\beta < 0$ : Décalage **vers le bas**.</li>
+        </ul>
+    </div>
+    
+    <p>
+        * **Sommet :** $\mathbf{S(0 ; \beta)}$.
+        * **Axe de symétrie :** $\mathbf{x=0}$.
+    </p>
+
+    <div id="sketch-container" class="graph-container"></div>
+</section>

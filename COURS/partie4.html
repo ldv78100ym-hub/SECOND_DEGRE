@@ -1,0 +1,26 @@
+<section id="partie-4">
+    <h2>↗️ Partie 4 : Translation Oblique $f_3(x) = (x-\alpha)^2 + \beta$</h2>
+    
+    <p>Cette fonction combine les transformations horizontales et verticales. La transformation est une **translation oblique** par le vecteur $\mathbf{\vec{w} (\alpha ; \beta)}$.</p>
+    
+    <div class="controls-group">
+        <div class="control-item">
+            <label for="alpha-value">Choisir $\alpha$ :</label>
+            <input type="range" id="alpha-value" min="-4" max="4" value="1" step="0.5" oninput="updateGraph(); showValue('alpha-display', this.value)">
+            <span id="alpha-display" class="math-text">1</span>
+        </div>
+        <div class="control-item">
+            <label for="beta-value">Choisir $\beta$ :</label>
+            <input type="range" id="beta-value" min="-4" max="4" value="2" step="0.5" oninput="updateGraph(); showValue('beta-display', this.value)">
+            <span id="beta-display" class="math-text">2</span>
+        </div>
+    </div>
+
+    <p>
+        * **Sommet :** Le point fondamental est $\mathbf{S(\alpha ; \beta)}$.
+        * **Axe de symétrie :** La droite verticale $\mathbf{x=\alpha}$.
+        * **Forme Canonique :** Cette écriture est un cas particulier de la **forme canonique**.
+    </p>
+
+    <div id="sketch-container" class="graph-container"></div>
+</section>
