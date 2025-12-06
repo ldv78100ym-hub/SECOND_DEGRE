@@ -2,36 +2,58 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Degré : Cours Modulaire STI2D/STL</title>
+    <title>Génération de Tableaux Mathématiques</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     
     <link rel="stylesheet" href="style.css">
-    <script src="tables.js" defer></script>
-    <script src="resolution.js" defer></script>
-    <script src="graph.js" defer></script>
-    <script src="app.js" defer></script>
 </head>
 <body>
 
-    <header>
-        <h1>Quadratique pour la 1ère STI2D/STL</h1>
-        <p>Fonctions du Second Degré : Étude et Transformations</p>
-    </header>
+    <h1>Générateur de Tableaux (f(x) = a x² + b x + c)</h1>
 
-    <nav id="menu">
-        <button onclick="loadPart(1)" class="active">Partie 1 : $f(x)=x^2$</button>
-        <button onclick="loadPart(2)">Partie 2 : $(x-\alpha)^2$</button>
-        <button onclick="loadPart(3)">Partie 3 : $x^2+\beta$</button>
-        <button onclick="loadPart(4)">Partie 4 : $(x-\alpha)^2+\beta$</button>
-        <button onclick="loadPart(5)">Partie 5 : $a \cdot x^2$</button>
-        <button onclick="loadPart(6)">Partie 6 : Formes & Résolution</button>
-    </nav>
+    <div id="controls">
+        <label for="a">a = </label><input type="number" id="a" value="1" step="0.5">
+        <label for="b">b = </label><input type="number" id="b" value="-3" step="0.5">
+        <label for="c">c = </label><input type="number" id="c" value="2" step="0.5">
+        <button onclick="updateTables()">Générer les Tableaux</button>
+    </div>
+
+    <hr>
     
-    <div id="content-container">
-        </div>
+    <div id="variation-container"></div>
+    <div id="sign-container"></div>
+
+    <script src="math_tables.js"></script> 
+    
+    <script>
+        // Fonction d'initialisation et de mise à jour
+        function updateTables() {
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+            const c = parseFloat(document.getElementById('c').value);
+
+            if (a === 0) {
+                alert("Le coefficient 'a' doit être non-nul pour une fonction du second degré.");
+                return;
+            }
+
+            // Génération et affichage du tableau de variation
+            const variationHTML = generateVariationTable(a, b, c);
+            document.getElementById('variation-container').innerHTML = variationHTML;
+
+            // Génération et affichage du tableau de signes
+            const signHTML = generateSignTable(a, b, c);
+            document.getElementById('sign-container').innerHTML = signHTML;
+
+            // Rendu final des formules KaTeX
+            renderKaTeX('variation-container');
+            renderKaTeX('sign-container');
+        }
+
+        // Lancement au chargement de la page avec les valeurs par défaut
+        document.addEventListener('DOMContentLoaded', updateTables);
+    </script>
 
 </body>
 </html>
