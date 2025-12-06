@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Degré : Cours Modulaire STI2D/STL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="tables.js" defer></script>
+    <script src="resolution.js" defer></script>
+    <script src="graph.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
 
+    <header>
+        <h1>Quadratique pour la 1ère STI2D/STL</h1>
+        <p>Fonctions du Second Degré : Étude et Transformations</p>
+    </header>
+
+    <nav id="menu">
+        <button onclick="loadPart(1)" class="active">Partie 1 : $f(x)=x^2$</button>
+        <button onclick="loadPart(2)">Partie 2 : $(x-\alpha)^2$</button>
+        <button onclick="loadPart(3)">Partie 3 : $x^2+\beta$</button>
+        <button onclick="loadPart(4)">Partie 4 : $(x-\alpha)^2+\beta$</button>
+        <button onclick="loadPart(5)">Partie 5 : $a \cdot x^2$</button>
+        <button onclick="loadPart(6)">Partie 6 : Formes & Résolution</button>
+    </nav>
+    
+    <div id="content-container">
+        </div>
+
+</body>
+</html>
