@@ -147,6 +147,29 @@
     line-height: 1.4;
     color: #555;
 }
+/* Permettre au conteneur de prendre toute la largeur sur mobile */
+.container {
+    max-width: 900px;
+    width: 100%; /* Ajouté */
+    margin: 0 auto;
+    box-sizing: border-box; /* Ajouté */
+}
+
+/* Rendre les Canvas fluides */
+canvas {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-width: 100%; /* Indispensable pour ne pas déborder */
+    height: auto;    /* Conserve le ratio */
+}
+
+/* Améliorer la grille sur mobile */
+.link-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adaptatif */
+    gap: 15px;
+}
     </style>
 </head>
 <body>
@@ -698,6 +721,12 @@ window.onload = function() {
 
 function drawDetailedGraph() {
     const canvas = document.getElementById('detailedGraphCanvas');
+    const container = canvas.parentElement;
+    
+    // Forcer la largeur du canvas à celle du parent si mobile
+    if(window.innerWidth < 600) {
+        canvas.style.width = "100%";
+    }
     if (!canvas) return; // Ne rien faire si le canvas n'existe pas (par sécurité)
 
     const ctx = canvas.getContext('2d');
@@ -820,6 +849,24 @@ window.onload = function() {
     drawVariationTable(); // Ancienne fonction (section 4)
     drawDetailedGraph(); // Nouvelle fonction (section 5)
 };
+// Fonction pour ajuster les dimensions internes des canvas si nécessaire
+function resizeCanvasResponsive() {
+    const containers = document.querySelectorAll('.canvas-container, .anim-container');
+    containers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+            // On vérifie si la largeur du parent est plus petite que le canvas
+            const parentWidth = container.clientWidth;
+            if (parentWidth < canvas.width && parentWidth > 0) {
+                // On laisse le CSS (max-width: 100%) gérer l'affichage visuel,
+                // ce qui évite de casser les calculs de coordonnées JS internes.
+            }
+        }
+    });
+}
+
+// Appeler au chargement et au redimensionnement
+window.addEventListener('resize', resizeCanvasResponsive);
 </script>
 
 </body>
