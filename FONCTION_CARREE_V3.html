@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Complet : La Fonction Carré</title>
+    
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --demo-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        h1 { color: var(--primary-color); font-size: 2.5rem; margin: 0; }
+        .subtitle { color: #7f8c8d; font-size: 1.2rem; margin-top: 10px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--accent-color);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        h2 { color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 1.5rem; }
+        h3 { color: var(--accent-color); margin-top: 20px; }
+        .definition { border-left-color: var(--success-color); }
+        .important { font-weight: bold; color: #e74c3c; }
+
+        /* --- Styles Boutons et Démo --- */
+        .demo-btn {
+            background-color: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .demo-btn:hover { background-color: var(--accent-color); color: #fff; }
+        .demo-btn::before { content: "👁️"; margin-right: 8px; font-size: 1.1em; }
+        .demo-btn.active { background-color: var(--primary-color); border-color: var(--primary-color); color: white; }
+        .demo-btn.active::before { content: "✕"; }
+
+        .demo-content {
+            display: none;
+            background-color: var(--demo-bg);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+            border-left: 3px solid var(--primary-color);
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* --- Styles Spécifiques Animation & Maths --- */
+        .anim-container { text-align: center; margin-top: 20px; }
+        .math-box {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+            margin: 15px 0;
+        }
+        
+        canvas {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-width: 100%;
+        }
+
+        .controls { margin-top: 10px; }
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+        .auto-btn { background: #27ae60; color: white; }
+        .reset-btn { background: #95a5a6; color: white; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .canvas-container { display: flex; justify-content: center; margin: 20px 0; overflow-x: auto; }
+        footer { text-align: center; margin-top: 50px; color: #95a5a6; font-size: 0.9rem; }
+        .copyright-box {
+    font-size: 0.85rem;
+    text-align: left;
+    border: 1px dashed #ccc;
+    padding: 20px;
+    margin-top: 15px;
+    line-height: 1.4;
+    color: #555;
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>La Fonction Carré</h1>
+        <div class="subtitle">Étude complète : Définition, Variations et Représentation</div>
+    </header>
+
+    <section class="card definition">
+        <h2>1. Définition et Représentation Graphique</h2>
+        <p>La fonction carré est la fonction $f$ définie pour tout nombre réel $x$ par :</p>
+        <p style="text-align: center; font-size: 1.3em;">$$f(x) = x^2$$</p>
+        <ul>
+            <li><strong>Ensemble de définition :</strong> $\mathcal{D}_f = \mathbb{R} = ]-\infty ; +\infty[$.</li>
+            <li><strong>Courbe :</strong> Une <span class="important">parabole</span> de sommet $O(0;0)$.</li>
+        </ul>
+    </section>
+
+    <section class="card">
+    <h2>2. Parité et Symétrie</h2>
+    <p>La fonction carré est une fonction <strong>paire</strong>.</p>
+    <p><strong>Conséquence graphique :</strong> La courbe est <span class="important">symétrique par rapport à l'axe des ordonnées</span>.</p>
+    
+    <button class="demo-btn" onclick="toggleDemo(this)">Démonstration Théorique</button>
+    <div class="demo-content">
+        <p><strong>Rappel :</strong> Une fonction est paire si pour tout $x$ de son ensemble de définition, $-x$ appartient aussi à cet ensemble et $f(-x) = f(x)$.</p>
+        <p>Soit $x$ un nombre réel quelconque. On calcule l'image de $-x$ :</p>
+        <p>$$f(-x) = (-x)^2 = x^2 = f(x)$$</p>
+        <p>Conclusion : <strong>$f(-x) = f(x)$</strong>, la fonction est bien paire.</p>
+    </div>
+
+    <button class="demo-btn" id="animToggleBtn" onclick="toggleAnimation(this)">Simulation Interactive</button>
+    <div id="simulationSection" class="demo-content">
+        <div class="anim-container">
+            <canvas id="pliageCanvas" width="750" height="580"></canvas>
+            <div class="controls">
+                <button class="btn auto-btn" onclick="startSequence()">Lancer la construction</button>
+                <button class="btn reset-btn" onclick="resetCanvas()">Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section class="card">
+        <h2>3. Étude des Variations</h2>
+        
+        <h3>Sur l'intervalle $[0 ; +\infty[$</h3>
+        <p>La fonction carré est <strong>strictement croissante</strong> sur l'intervalle des réels positifs.</p>
+        
+        <button class="demo-btn" onclick="toggleDemo(this)">Approche intuitive (Inégalités)</button>
+        <div class="demo-content">
+            <p>Soient $a$ et $b$ tels que $0 \leq a < b$.</p> 
+            <p>Comme $a$ et $b$ sont positifs, l'ordre est conservé par le passage au carré : $a^2 < b^2$.</p> 
+            <p>La fonction conserve l'ordre, elle est donc strictement croissante.</p>
+        </div>
+
+        <button class="demo-btn" onclick="toggleRateDemo(this)">Démonstration rigoureuse (Taux de variation)</button>
+        <div class="demo-content">
+            <p>Soient $a$ et $b$ deux réels tels que $0 \le a < b$. Calculons le taux de variation $\tau$ :</p>
+            <p>$$\tau = \frac{f(b) - f(a)}{b - a} = \frac{b^2 - a^2}{\color{red}{b - a}}$$</p>
+            
+            <div class="math-box">
+                <strong>Identité Remarquable :</strong><br>
+                Différence de deux carrés : $b^2 - a^2 = (b - a)(b + a)$
+            </div>
+
+            <p>En substituant :</p>
+            <p>$$\tau = \frac{\color{red}{(b - a)}\color{black}{(b + a)}}{\color{red}{b - a}} = b + a$$</p>
+            
+            <p>Comme $a \ge 0$ et $b > 0$, alors $b + a > 0$. $\tau$ est strictement positif, donc la fonction est strictement croissante.</p>
+            
+            <div class="anim-container">
+                <p><em>Illustration graphique : flèche directionnelle des variations</em></p>
+                <canvas id="croquisVariations" width="450" height="350"></canvas>
+                <br>
+                <button class="demo-btn" onclick="genererCroquis()">Générer un nouvel exemple</button>
+            </div>
+        </div>
+
+        <h3>Sur l'intervalle $]-\infty ; 0]$</h3>
+        <p>La fonction carré est <strong>strictement décroissante</strong> sur $]-\infty ; 0]$.</p>
+        <button class="demo-btn" onclick="toggleDemo(this)">Explication</button>
+        <div class="demo-content">
+            <p>Par parité, la fonction étant <strong style="color:red;">croissante</strong> sur $[0;+\infty[$, elle sera <strong style="color:blue;">décroissante</strong> sur $]-\infty;0]$.</p>
+        </div>
+	<p>Visualisation de la courbe, colorée selon le signe de $x$ :</p>
+        <ul>
+            <li><strong style="color:blue;">Bleu</strong> : pour $x < 0$ (partie de la fonction où elle est <strong style="color:blue;">décroissante</strong>)</li>
+            <li><strong style="color:red;">Rouge</strong> : pour $x \ge 0$ (partie de la fonction où elle est <strong style="color:red;">croissante</strong>)</li>
+        </ul>
+        <div class="canvas-container" style="justify-content: center; margin-top: 20px;">
+            <canvas id="detailedGraphCanvas" width="500" height="400"></canvas>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>4. Tableau de Variation</h2>
+        <p>Synthèse des résultats :</p>
+        <div class="canvas-container">
+            <canvas id="varTable" width="500" height="200"></canvas>
+        </div>
+    </section>
+
+    <footer>
+	<button class="demo-btn" style="border-color:#95a5a6; color:#95a5a6;" onclick="toggleDemo(this)">⚖️ Droits d'auteur</button>
+    	<div class="demo-content copyright-box">
+        <strong>⚖️ Droits d'Auteur et Licence</strong><br>
+        <strong>Auteur :</strong> Yann Merdy (yann.merdy@gmail.com)<br>
+        <strong>Date :</strong> Décembre 2025<br><br>
+        <em>Licence d'Utilisation Non Commerciale</em><br>
+        Ce code HTML/CSS/JavaScript ainsi que le contenu généré sont la propriété intellectuelle exclusive de l'auteur.<br><br>
+        ✅ <strong>Utilisation Privée et Éducative :</strong> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code à des fins personnelles, éducatives et non lucratives.<br>
+        🚫 <strong>Utilisation Commerciale :</strong> Toute utilisation commerciale ou professionnelle est strictement interdite sans accord écrit.<br>
+        ✍️ <strong>Attribution :</strong> Toute reproduction doit conserver la mention de l'auteur original.
+    </div>
+</footer>
+</div>
+
+<script>
+// ==========================================
+// 1. LOGIQUE GÉNÉRALE ET AFFICHAGE
+// ==========================================
+
+function toggleDemo(btn) {
+    const content = btn.nextElementSibling;
+    if (content.style.display === "block") {
+        content.style.display = "none";
+        btn.classList.remove("active");
+    } else {
+        content.style.display = "block";
+        btn.classList.add("active");
+    }
+}
+
+// Spécifique pour le Taux de Variation (déclenche le dessin du croquis)
+function toggleRateDemo(btn) {
+    const content = btn.nextElementSibling;
+    const isActive = content.style.display === "block";
+    content.style.display = isActive ? "none" : "block";
+    if (isActive) {
+        btn.classList.remove("active");
+    } else {
+        btn.classList.add("active");
+        genererCroquis(); // Lance le dessin spécifique
+    }
+}
+
+function toggleAnimation(btn) {
+    const section = document.getElementById('simulationSection');
+    if (section.style.display === "block") {
+        section.style.display = "none";
+        btn.classList.remove("active");
+    } else {
+        section.style.display = "block";
+        btn.classList.add("active");
+        drawGrid();
+        drawAxes();
+    }
+}
+
+// ==========================================
+// 2. ANIMATION TAUX DE VARIATION (Importé)
+// ==========================================
+
+function drawMathLabel(ctx, text, x, y) {
+    ctx.fillStyle = "#000";
+    ctx.font = "italic 16px 'Times New Roman'";
+    ctx.fillText(text, x, y);
+}
+
+function drawSimpleArrowHead(ctx, x, y, angle) {
+    const headLen = 12;
+    ctx.save();
+    ctx.beginPath();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-headLen, headLen/3);
+    ctx.lineTo(-headLen, -headLen/3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+}
+
+function genererCroquis() {
+    const canvas = document.getElementById('croquisVariations');
+    // Vérification de sécurité si le canvas n'est pas visible
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width; const h = canvas.height;
+    
+    const origin = { x: 70, y: h - 60 };
+    const scaleX = 140; 
+    const scaleY = 60;
+
+    ctx.clearRect(0, 0, w, h);
+    
+    // Axes
+    ctx.strokeStyle = "#444"; ctx.fillStyle = "#444"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); 
+    // Axe x
+    ctx.moveTo(10, origin.y); ctx.lineTo(w - 10, origin.y);
+    ctx.stroke();
+    drawSimpleArrowHead(ctx, w - 10, origin.y, 0);
+    
+    // Axe y
+    ctx.beginPath();
+    ctx.moveTo(origin.x, h - 10); ctx.lineTo(origin.x, 20);
+    ctx.stroke();
+    drawSimpleArrowHead(ctx, origin.x, 20, -Math.PI/2);
+
+    let a = 0.4 + Math.random() * 0.4;
+    let b = a + 0.8 + Math.random() * 0.4;
+
+    const pA = { x: origin.x + a * scaleX, y: origin.y - (a * a) * scaleY };
+    const pB = { x: origin.x + b * scaleX, y: origin.y - (b * b) * scaleY };
+
+    // Projections
+    ctx.setLineDash([5, 5]); ctx.strokeStyle = "#95a5a6"; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pA.x, pA.y); ctx.lineTo(pA.x, origin.y); 
+    ctx.moveTo(pA.x, pA.y); ctx.lineTo(origin.x, pA.y);
+    ctx.moveTo(pB.x, pB.y); ctx.lineTo(pB.x, origin.y);
+    ctx.moveTo(pB.x, pB.y); ctx.lineTo(origin.x, pB.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Vecteur Rouge (Variations)
+    ctx.strokeStyle = "#e74c3c"; ctx.fillStyle = "#e74c3c"; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(pA.x, pA.y);
+    ctx.lineTo(pB.x, pB.y);
+    ctx.stroke();
+    const angleVecteur = Math.atan2(pB.y - pA.y, pB.x - pA.x);
+    drawSimpleArrowHead(ctx, pB.x, pB.y, angleVecteur);
+
+    // Points
+    ctx.fillStyle = "#3498db";
+    ctx.beginPath(); ctx.arc(pA.x, pA.y, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(pB.x, pB.y, 4, 0, Math.PI*2); ctx.fill();
+
+    // Étiquettes
+    drawMathLabel(ctx, "a", pA.x - 5, origin.y + 25);
+    drawMathLabel(ctx, "b", pB.x - 5, origin.y + 25);
+    drawMathLabel(ctx, "f(a)", origin.x - 45, pA.y + 5);
+    drawMathLabel(ctx, "f(b)", origin.x - 45, pB.y + 5);
+    drawMathLabel(ctx, "x", w - 25, origin.y - 10);
+    drawMathLabel(ctx, "y", origin.x + 10, 20);
+}
+
+// ==========================================
+// 3. TABLEAU DE VARIATION (Section 4)
+// ==========================================
+class LatexTableDrawer {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+        this.font = "20px 'Times New Roman', serif"; 
+        this.ctx.font = this.font;
+    }
+    clear() { this.ctx.clearRect(0, 0, this.width, this.height); this.ctx.fillStyle = "#fff"; this.ctx.fillRect(0, 0, this.width, this.height); }
+    drawLine(x1, y1, x2, y2) { this.ctx.beginPath(); this.ctx.moveTo(x1, y1); this.ctx.lineTo(x2, y2); this.ctx.strokeStyle = "#000"; this.ctx.lineWidth = 1; this.ctx.stroke(); }
+    drawText(text, x, y, align = "center") { this.ctx.fillStyle = "#000"; this.ctx.textAlign = align; this.ctx.textBaseline = "middle"; this.ctx.font = this.font; this.ctx.fillText(text, x, y); }
+    drawArrow(x1, y1, x2, y2) {
+        const headLength = 10; const angle = Math.atan2(y2 - y1, x2 - x1);
+        this.ctx.beginPath(); this.ctx.moveTo(x1, y1); this.ctx.lineTo(x2, y2); this.ctx.strokeStyle = "#000"; this.ctx.lineWidth = 1.2; this.ctx.stroke();
+        this.ctx.beginPath(); this.ctx.moveTo(x2, y2);
+        this.ctx.lineTo(x2 - headLength * Math.cos(angle - Math.PI / 6), y2 - headLength * Math.sin(angle - Math.PI / 6));
+        this.ctx.lineTo(x2 - headLength * Math.cos(angle + Math.PI / 6), y2 - headLength * Math.sin(angle + Math.PI / 6));
+        this.ctx.fillStyle = "#000"; this.ctx.fill();
+    }
+}
+
+function drawVariationTable() {
+    const drawer = new LatexTableDrawer('varTable');
+    drawer.clear();
+    const w = drawer.width; const h = drawer.height;
+    drawer.drawLine(0, 40, w, 40); drawer.drawLine(100, 0, 100, h);
+    drawer.drawText("x", 50, 20); drawer.drawText("f(x)", 50, h/2 + 20);
+    const xStart = 100; const availableWidth = w - xStart;
+    drawer.drawText("-∞", xStart + 60, 20); drawer.drawText("0", xStart + availableWidth/2, 20); drawer.drawText("+∞", w - 60, 20);
+    drawer.drawText("+∞", xStart + 60, 70); drawer.drawText("0", xStart + availableWidth/2, h - 30); drawer.drawText("+∞", w - 60, 70);
+    drawer.drawArrow(xStart + 80, 85, xStart + availableWidth/2 - 20, h - 45);
+    drawer.drawArrow(xStart + availableWidth/2 + 20, h - 45, w - 80, 85);
+}
+
+// ==========================================
+// 4. ANIMATION PARITÉ (Section 2)
+// ==========================================
+const animCanvas = document.getElementById('pliageCanvas');
+const animCtx = animCanvas.getContext('2d');
+const animOrigin = { x: 375, y: 500 };
+const animScale = 85;
+
+let pointsHistorique = []; 
+let currentPointIndex = 0;
+let sequencePoints = [];
+let currentState = 0; // STATE_IDLE
+let progress = 0;
+let pauseCounter = 0;
+
+function setupSequence() {
+    sequencePoints = [];
+    for (let i = 1; i <= 15; i++) {
+        let x = 0.35 + (i * 0.12);
+        sequencePoints.push({ x: x, y: x * x });
+    }
+}
+
+function renderAnimation() {
+    animCtx.clearRect(0, 0, animCanvas.width, animCanvas.height);
+    drawGrid(); drawAxes();
+    pointsHistorique.forEach((p, idx) => drawFullPairStructure(p, idx + 1));
+
+    if (currentState !== 0 && currentPointIndex < sequencePoints.length) {
+        let p = sequencePoints[currentPointIndex];
+        const idx = currentPointIndex + 1;
+
+        if (currentState === 1) { // STATE_DRAW_M
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, progress, '#3498db', idx, false, true);
+            progress += 0.02; if (progress >= 1) { currentState = 2; progress = 0; }
+        }
+        else if (currentState === 2) { // STATE_PROJ_H_M
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawProjectionHorizontal(p.x, p.y, progress, '#3498db');
+            progress += 0.02; if (progress >= 1) { currentState = 3; progress = 0; }
+        }
+        else if (currentState === 3) { // STATE_VECTOR_M
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+            drawObliqueVector(p, progress, idx, true);
+            progress += 0.04; if (progress >= 1) { currentState = 4; progress = 0; }
+        }
+        else if (currentState === 4) { // STATE_FOLDING
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawObliqueVector(p, 1, idx, true);
+            drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+            const curX = p.x * (1 - 2 * progress);
+            animCtx.fillStyle = '#e74c3c'; animCtx.beginPath(); animCtx.arc(animOrigin.x + curX * animScale, animOrigin.y - p.y * animScale, 4, 0, Math.PI * 2); animCtx.fill();
+            progress += 0.03; if (progress >= 1) { currentState = 5; progress = 0; }
+        }
+        else if (currentState === 5) { // STATE_DRAW_MP
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawObliqueVector(p, 1, idx, true);
+            drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+            drawMathText(`M'`, animOrigin.x - p.x * animScale - 25, animOrigin.y - p.y * animScale - 12, idx, '#e74c3c');
+            drawProjectionVertical(-p.x, p.y, progress, '#e74c3c', idx, true, true);
+            progress += 0.02; if (progress >= 1) { currentState = 6; progress = 0; }
+        }
+        else if (currentState === 6) { // STATE_PROJ_H_MP
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawObliqueVector(p, 1, idx, true);
+            drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+            drawMathText(`M'`, animOrigin.x - p.x * animScale - 25, animOrigin.y - p.y * animScale - 12, idx, '#e74c3c');
+            drawProjectionVertical(-p.x, p.y, 1, '#e74c3c', idx, true, true);
+            drawProjectionHorizontal(-p.x, p.y, progress, '#e74c3c');
+            progress += 0.02; if (progress >= 1) { currentState = 7; progress = 0; }
+        }
+        else if (currentState === 7) { // STATE_VECTOR_MP
+            drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+            drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+            drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+            drawObliqueVector(p, 1, idx, true);
+            drawMathText(`M'`, animOrigin.x - p.x * animScale - 25, animOrigin.y - p.y * animScale - 12, idx, '#e74c3c');
+            drawProjectionVertical(-p.x, p.y, 1, '#e74c3c', idx, true, true);
+            drawProjectionHorizontal(-p.x, p.y, 1, '#e74c3c');
+            drawObliqueVector(p, progress, idx, false);
+            progress += 0.04; if (progress >= 1) { currentState = 8; pauseCounter = 0; }
+        }
+        else if (currentState === 8) { // PAUSE
+            drawFullTemporaryPoint(p, idx);
+            pauseCounter++; if (pauseCounter >= 90) { currentState = 9; }
+        }
+        else if (currentState === 9) { // DONE
+            pointsHistorique.push(p); currentPointIndex++;
+            currentState = currentPointIndex < sequencePoints.length ? 1 : 0;
+            progress = 0;
+        }
+    }
+    if (currentState !== 0) requestAnimationFrame(renderAnimation);
+}
+
+function drawGrid() {
+    animCtx.lineWidth = 0.5; animCtx.strokeStyle = '#f0f0f0'; drawGridLines(0.1);
+    animCtx.lineWidth = 0.8; animCtx.strokeStyle = '#e0e0e0'; drawGridLines(0.5);
+    animCtx.lineWidth = 1; animCtx.strokeStyle = '#d0d0d0'; drawGridLines(1);
+}
+function drawGridLines(step) {
+    animCtx.beginPath();
+    for (let x = -10; x <= 10; x += step) {
+        let px = animOrigin.x + x * animScale;
+        if (px >= 0 && px <= animCanvas.width) { animCtx.moveTo(px, 0); animCtx.lineTo(px, animCanvas.height); }
+    }
+    for (let y = -10; y <= 10; y += step) {
+        let py = animOrigin.y - y * animScale;
+        if (py >= 0 && py <= animCanvas.height) { animCtx.moveTo(0, py); animCtx.lineTo(animCanvas.width, py); }
+    }
+    animCtx.stroke();
+}
+// --- NOUVELLE FONCTION UTILITAIRE POUR LES FLÈCHES ---
+// Fonction pour dessiner une pointe de flèche à une position (x,y) avec un angle donné
+function drawAnimAxesArrow(x, y, angle) {
+    const headLen = 12; // Longueur des côtés de la pointe
+    animCtx.save();
+    // On utilise la couleur de remplissage identique au trait actuel
+    animCtx.fillStyle = animCtx.strokeStyle;
+    animCtx.beginPath();
+    animCtx.translate(x, y);
+    animCtx.rotate(angle);
+    // Dessin du triangle de la pointe
+    animCtx.moveTo(0, 0);
+    animCtx.lineTo(-headLen, headLen / 3);
+    animCtx.lineTo(-headLen, -headLen / 3);
+    animCtx.closePath();
+    animCtx.fill();
+    animCtx.restore();
+}
+
+// --- FONCTION drawAxes MISE À JOUR ---
+function drawAxes() {
+    animCtx.strokeStyle = '#444';
+    // Important : définir le fillStyle pour que les pointes de flèches soient remplies
+    animCtx.fillStyle = '#444'; 
+    animCtx.lineWidth = 1.5;
+
+    // --- AXE X (Horizontal) ---
+    animCtx.beginPath();
+    // On trace la ligne de gauche à droite, en s'arrêtant 10px avant le bord pour la flèche
+    animCtx.moveTo(0, animOrigin.y);
+    animCtx.lineTo(animCanvas.width - 10, animOrigin.y);
+    animCtx.stroke();
+    // Dessiner la flèche pointant vers la droite (angle 0)
+    drawAnimAxesArrow(animCanvas.width - 10, animOrigin.y, 0);
+
+    // --- AXE Y (Vertical) ---
+    animCtx.beginPath();
+    // On trace la ligne du bas vers le haut, en s'arrêtant 10px avant le bord haut
+    animCtx.moveTo(animOrigin.x, animCanvas.height);
+    animCtx.lineTo(animOrigin.x, 10);
+    animCtx.stroke();
+    // Dessiner la flèche pointant vers le haut (angle -PI/2)
+    drawAnimAxesArrow(animOrigin.x, 10, -Math.PI / 2);
+
+    // --- LABELS (x et y) ---
+    animCtx.font = "italic 20px 'Times New Roman', serif";
+    
+    // Label X
+    animCtx.textAlign = "right";
+    animCtx.textBaseline = "top";
+    // Positionné un peu avant la fin de l'axe et sous l'axe
+    animCtx.fillText("x", animCanvas.width - 15, animOrigin.y + 10);
+
+    // Label Y
+    animCtx.textAlign = "right";
+    animCtx.textBaseline = "middle";
+    // Positionné à gauche de l'axe, près du sommet
+    animCtx.fillText("y", animOrigin.x - 15, 20);
+}function drawMathText(base, x, y, index, color) {
+    animCtx.save(); animCtx.fillStyle = color; animCtx.font = "italic 16px 'Times New Roman'";
+    animCtx.fillText(base, x, y);
+    let baseWidth = animCtx.measureText(base).width;
+    animCtx.font = "10px Arial"; animCtx.fillText(index, x + baseWidth, y + 4);
+    animCtx.restore();
+}
+function drawProjectionVertical(x, y, prog, color, idx, isMPrime, keepLabels) {
+    animCtx.save(); animCtx.setLineDash([3, 3]); animCtx.strokeStyle = color;
+    const cx = animOrigin.x + x * animScale; const startY = animOrigin.y - y * animScale;
+    const currentY = startY + (animOrigin.y - startY) * prog;
+    animCtx.beginPath(); animCtx.moveTo(cx, startY); animCtx.lineTo(cx, currentY); animCtx.stroke();
+    if (prog >= 1 || keepLabels) {
+        animCtx.setLineDash([]);
+        if(isMPrime) drawMathText(`-x`, cx - 18, animOrigin.y + 20, idx, color);
+        else drawMathText(`x`, cx - 10, animOrigin.y + 20, idx, color);
+    }
+    animCtx.restore();
+}
+function drawProjectionHorizontal(x, y, prog, color) {
+    animCtx.save(); animCtx.setLineDash([3, 3]); animCtx.strokeStyle = color;
+    const startX = animOrigin.x + x * animScale; const cy = animOrigin.y - y * animScale;
+    const currentX = startX + (animOrigin.x - startX) * prog;
+    animCtx.beginPath(); animCtx.moveTo(startX, cy); animCtx.lineTo(currentX, cy); animCtx.stroke();
+    animCtx.restore();
+}
+function drawObliqueVector(p, opacity, idx, isRight) {
+    animCtx.save(); animCtx.globalAlpha = opacity;
+    const my = animOrigin.y - p.y * animScale; const px = animOrigin.x + (isRight ? p.x : -p.x) * animScale;
+    const py = animOrigin.y - (p.y + 1) * animScale; const color = isRight ? '#3498db' : '#e74c3c';
+    drawArrowAnim(px, py, animOrigin.x, my, color);
+    animCtx.font = "italic 16px 'Times New Roman'"; animCtx.fillStyle = color;
+    const label = isRight ? `f(x` : `f(-x`; animCtx.fillText(label, px - (isRight? 15 : 25), py - 12);
+    let labelWidth = animCtx.measureText(label).width;
+    animCtx.font = "10px Arial"; animCtx.fillText(idx, px - (isRight? 15 : 25) + labelWidth, py - 8);
+    animCtx.font = "italic 16px 'Times New Roman'"; animCtx.fillText(")", px - (isRight? 15 : 25) + labelWidth + 8, py - 12);
+    animCtx.restore();
+}
+function drawArrowAnim(x1, y1, x2, y2, color) {
+    animCtx.save(); animCtx.setLineDash([4, 2]); animCtx.strokeStyle = color; animCtx.fillStyle = color;
+    const head = 8; const angle = Math.atan2(y2 - y1, x2 - x1);
+    animCtx.beginPath(); animCtx.moveTo(x1, y1); animCtx.lineTo(x2, y2); animCtx.stroke();
+    animCtx.setLineDash([]); animCtx.beginPath(); animCtx.moveTo(x2, y2);
+    animCtx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
+    animCtx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
+    animCtx.fill(); animCtx.restore();
+}
+function drawFullTemporaryPoint(p, idx) {
+    animCtx.fillStyle = '#3498db'; animCtx.beginPath(); animCtx.arc(animOrigin.x + p.x * animScale, animOrigin.y - p.y * animScale, 4, 0, Math.PI * 2); animCtx.fill();
+    animCtx.fillStyle = '#e74c3c'; animCtx.beginPath(); animCtx.arc(animOrigin.x - p.x * animScale, animOrigin.y - p.y * animScale, 4, 0, Math.PI * 2); animCtx.fill();
+    drawMathText(`M`, animOrigin.x + p.x * animScale + 10, animOrigin.y - p.y * animScale - 12, idx, '#3498db');
+    drawMathText(`M'`, animOrigin.x - p.x * animScale - 25, animOrigin.y - p.y * animScale - 12, idx, '#e74c3c');
+    drawProjectionVertical(p.x, p.y, 1, '#3498db', idx, false, true);
+    drawProjectionVertical(-p.x, p.y, 1, '#e74c3c', idx, true, true);
+    drawProjectionHorizontal(p.x, p.y, 1, '#3498db');
+    drawProjectionHorizontal(-p.x, p.y, 1, '#e74c3c');
+    drawObliqueVector(p, 1, idx, true);
+    drawObliqueVector(p, 1, idx, false);
+}
+function drawFullPairStructure(p, idx) {
+    const cy = animOrigin.y - p.y * animScale;
+    animCtx.fillStyle = '#3498db'; animCtx.beginPath(); animCtx.arc(animOrigin.x + p.x * animScale, cy, 4, 0, Math.PI * 2); animCtx.fill();
+    animCtx.fillStyle = '#e74c3c'; animCtx.beginPath(); animCtx.arc(animOrigin.x - p.x * animScale, cy, 4, 0, Math.PI * 2); animCtx.fill();
+    animCtx.strokeStyle = '#bdc3c7'; animCtx.setLineDash([2, 2]); animCtx.beginPath(); animCtx.moveTo(animOrigin.x - p.x*animScale, cy); animCtx.lineTo(animOrigin.x + p.x*animScale, cy); animCtx.stroke();
+    animCtx.strokeStyle = '#e67e22'; animCtx.setLineDash([]); animCtx.beginPath();
+    animCtx.moveTo(animOrigin.x + (p.x*animScale)/2, cy-4); animCtx.lineTo(animOrigin.x + (p.x*animScale)/2, cy+4);
+    animCtx.moveTo(animOrigin.x - (p.x*animScale)/2, cy-4); animCtx.lineTo(animOrigin.x - (p.x*animScale)/2, cy+4); animCtx.stroke();
+    animCtx.strokeStyle = '#2c3e50'; animCtx.beginPath(); animCtx.moveTo(animOrigin.x, cy-8); animCtx.lineTo(animOrigin.x+8, cy-8); animCtx.lineTo(animOrigin.x+8, cy); animCtx.stroke();
+}
+function startSequence() { resetCanvas(); setupSequence(); currentState = 1; renderAnimation(); }
+function resetCanvas() { pointsHistorique = []; currentPointIndex = 0; currentState = 0; animCtx.clearRect(0,0,750,580); drawGrid(); drawAxes(); }
+
+// INITIALISATION AU CHARGEMENT
+window.onload = function() {
+    drawVariationTable();
+    drawDetailedGraph();
+};
+// ==========================================
+// 5. TRACÉ DÉTAILLÉ DE LA COURBE (NOUVELLE SECTION)
+// ==========================================
+
+function drawDetailedGraph() {
+    const canvas = document.getElementById('detailedGraphCanvas');
+    if (!canvas) return; // Ne rien faire si le canvas n'existe pas (par sécurité)
+
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Paramètres du Repère (ajustés à la taille 500x400)
+    const ORIGIN = { x: W / 2, y: H - 30 }; // Origine en bas au centre
+    const SCALE = 35; // 1 unité = 35 pixels
+    const MAX_X = (W / 2) / SCALE; // Environ 7
+    const MAX_Y = (H - 30) / SCALE; // Environ 10
+
+    /** Convertit les coordonnées mathématiques en coordonnées écran (pixels) */
+    function toScreenCoords(x, y) {
+        return {
+            x: ORIGIN.x + x * SCALE,
+            y: ORIGIN.y - y * SCALE
+        };
+    }
+
+    // --- Fonctions de Tracé spécifiques à ce graphique ---
+
+    function drawGraphGrid() {
+        // Lignes fines (papier millimétré)
+        ctx.strokeStyle = '#f0f0f0';
+        ctx.lineWidth = 0.5;
+        for (let x = -MAX_X; x <= MAX_X; x += 0.5) {
+            let px = ORIGIN.x + x * SCALE;
+            ctx.beginPath();
+            ctx.moveTo(px, 0); ctx.lineTo(px, H);
+            ctx.stroke();
+        }
+        for (let y = 0; y <= MAX_Y; y += 0.5) {
+            let py = ORIGIN.y - y * SCALE;
+            ctx.beginPath();
+            ctx.moveTo(0, py); ctx.lineTo(W, py);
+            ctx.stroke();
+        }
+    }
+
+    function drawGraphAxes() {
+    ctx.strokeStyle = '#333';
+    ctx.fillStyle = '#333'; // Important pour remplir la tête de flèche
+    ctx.lineWidth = 1.5;
+
+    // --- Axe X ---
+    ctx.beginPath();
+    ctx.moveTo(0, ORIGIN.y);
+    ctx.lineTo(W - 10, ORIGIN.y); // On s'arrête 10px avant le bord
+    ctx.stroke();
+    // Ajout de la flèche (angle 0 = droite)
+    drawSimpleArrowHead(ctx, W - 10, ORIGIN.y, 0);
+
+    // --- Axe Y ---
+    ctx.beginPath();
+    ctx.moveTo(ORIGIN.x, H);
+    ctx.lineTo(ORIGIN.x, 10); // On s'arrête 10px avant le haut
+    ctx.stroke();
+    // Ajout de la flèche (angle -PI/2 = haut)
+    drawSimpleArrowHead(ctx, ORIGIN.x, 10, -Math.PI / 2);
+    
+    // --- Labels (Labels repositionnés pour ne pas chevaucher les flèches) ---
+    ctx.fillStyle = '#333';
+    ctx.font = 'italic 16px Times New Roman';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('x', W - 15, ORIGIN.y + 15);
+    ctx.fillText('y', ORIGIN.x - 10, 10);
+}
+
+    function drawParabola() {
+        ctx.lineWidth = 3;
+        const step = 0.05;
+
+        // --- Courbe Bleue (x < 0) ---
+        ctx.strokeStyle = 'blue';
+        ctx.beginPath();
+        let startPoint = toScreenCoords(-MAX_X, (-MAX_X) ** 2);
+        ctx.moveTo(startPoint.x, startPoint.y);
+
+        for (let x = -MAX_X + step; x < 0; x += step) {
+            let y = x * x;
+            let p = toScreenCoords(x, y);
+            if (p.y >= 0 && p.y <= H) {
+                ctx.lineTo(p.x, p.y);
+            }
+        }
+        let p_origin = toScreenCoords(0, 0);
+        ctx.lineTo(p_origin.x, p_origin.y);
+        ctx.stroke();
+
+        // --- Courbe Rouge (x >= 0) ---
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.moveTo(p_origin.x, p_origin.y);
+
+        for (let x = step; x <= MAX_X; x += step) {
+            let y = x * x;
+            let p = toScreenCoords(x, y);
+            if (p.y >= 0 && p.y <= H) {
+                ctx.lineTo(p.x, p.y);
+            }
+        }
+        ctx.stroke();
+    }
+    
+    // Séquence de tracé
+    ctx.clearRect(0, 0, W, H);
+    drawGraphGrid();
+    drawGraphAxes();
+    drawParabola();
+}
+
+// ==========================================
+// 6. INITIALISATION MISE À JOUR (Appel du nouveau graphique)
+// ==========================================
+
+// Le code d'initialisation existant (window.onload) doit être étendu pour inclure le nouveau tracé.
+window.onload = function() {
+    drawVariationTable(); // Ancienne fonction (section 4)
+    drawDetailedGraph(); // Nouvelle fonction (section 5)
+};
+</script>
+
+</body>
+</html>
