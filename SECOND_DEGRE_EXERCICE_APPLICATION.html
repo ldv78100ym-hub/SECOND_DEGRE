@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Générateur de Devoirs - Étude de Fonctions (Complet)</title>
+<script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+        },
+        startup: {
+            pageReady: () => MathJax.startup.defaultPageReady()
+        }
+    };
+</script>
+<script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+<style>
+    :root {
+        --primary: #1a237e;
+        --accent: #f57c00;
+        --solution: #2e7d32;
+        --exercise: #1565c0;
+        --graph: #9c27b0;
+        --bg: #f4f6f8;
+        --card: #ffffff;
+        --text: #333333;
+        --border: #e0e0e0;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding-bottom: 50px;
+    }
+    
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    
+    header {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: linear-gradient(135deg, var(--primary) 0%, #303f9f 100%);
+        color: white;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    header h1 { font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700; }
+    
+    .copyright-btn {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 1rem;
+        font-weight: 600;
+    }
+    
+    .copyright-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* MODALS */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        width: 90%;
+        max-width: 900px;
+        max-height: 85vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation: slideUp 0.4s ease;
+    }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translate(-50%, -40%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary) 0%, #303f9f 100%);
+        color: white;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s;
+    }
+    
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(90deg);
+    }
+    
+    .modal-body {
+        padding: 30px;
+        overflow-y: auto;
+        max-height: calc(85vh - 100px);
+    }
+    
+    .modal-body h3 {
+        color: var(--primary);
+        margin: 1.5rem 0 1rem 0;
+        font-size: 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #eee;
+    }
+    
+    .modal-body h3:first-child {
+        margin-top: 0;
+    }
+    
+    /* Graph Modal spécifique */
+    .graph-container {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 20px 0;
+        position: relative;
+    }
+    
+    #graphCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+    }
+    
+    .graph-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    .graph-control-group {
+        background: #f5f7ff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .graph-control-group h4 {
+        margin: 0 0 10px 0;
+        font-size: 1rem;
+        color: var(--primary);
+        text-align: center;
+    }
+    
+    .graph-control-buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+    
+    .graph-control-btn {
+        padding: 8px 15px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        flex: 1;
+        text-align: center;
+    }
+    
+    .graph-control-btn:hover {
+        background: #303f9f;
+        transform: translateY(-2px);
+    }
+    
+    .graph-control-btn.small {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .graph-info {
+        background: #f0f7ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        border-left: 4px solid var(--primary);
+    }
+    
+    .graph-scale-info {
+        display: flex;
+        justify-content: space-around;
+        margin: 10px 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .graph-scale-info div {
+        text-align: center;
+        padding: 5px 10px;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        min-width: 120px;
+    }
+    
+    /* Info boxes pour droits d'auteur */
+    .info-box {
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    
+    .info-box.author {
+        background: #e8f5e9;
+        border-left-color: var(--solution);
+    }
+    
+    .info-box.license {
+        background: #e3f2fd;
+        border-left-color: var(--primary);
+    }
+    
+    .info-box.allowed {
+        background: #f1f8e9;
+        border-left-color: #4caf50;
+    }
+    
+    .info-box.forbidden {
+        background: #ffebee;
+        border-left-color: #c62828;
+    }
+    
+    .info-box.obligations {
+        background: #fff3e0;
+        border-left-color: var(--accent);
+    }
+    
+    .contact-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        background: #f0f4ff;
+        border-radius: 6px;
+        transition: all 0.3s;
+    }
+    
+    .contact-link:hover {
+        background: #e0e8ff;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    .copyright-footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 0.9em;
+        color: #666;
+    }
+    
+    /* SECTION PRINCIPALE */
+    .section-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    section {
+        background: var(--card);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid var(--border);
+    }
+    
+    .exercise { border-top: 4px solid var(--exercise); }
+    .application { border-top: 4px solid var(--accent); }
+    
+    h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+    h3 { color: #333; font-size: 1.3rem; margin: 1.5rem 0 1rem 0; }
+    h4 { color: var(--exercise); margin: 1.2rem 0; font-size: 1.1rem; font-weight: 600; }
+    
+    .math-formula {
+        font-size: 1.3rem;
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        margin: 1.5rem 0;
+        text-align: center;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+        overflow-x: auto;
+    }
+    
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2.5rem 0;
+        flex-wrap: wrap;
+    }
+    
+    button {
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        color: white;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    
+    button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    button:active { transform: translateY(0); }
+    .btn-gen { background: var(--primary); }
+    .btn-sol { background: var(--solution); }
+    .btn-app { background: var(--accent); }
+    .btn-graph { background: var(--graph); }
+    
+    .solution-box {
+        display: none;
+        background: #fff;
+        border: 1px solid var(--solution);
+        margin-top: 2rem;
+        border-radius: 8px;
+        overflow: hidden;
+        animation: slideDown 0.4s ease-out;
+    }
+    
+    .solution-content { padding: 2rem; }
+    .solution-header { 
+        background: var(--solution); color: white; padding: 1rem 1.5rem; 
+        font-weight: bold; font-size: 1.1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    
+    @keyframes slideDown { 
+        from { opacity: 0; transform: translateY(-10px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    .step { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px dashed var(--border); }
+    .step:last-child { border-bottom: none; margin-bottom: 0; }
+    
+    .note-box {
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+    }
+    .method-box { background: #e3f2fd; border-left: 4px solid var(--exercise); color: #0d47a1; }
+    
+    .canvas-wrapper {
+        width: 100%;
+        margin: 2rem 0;
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0 0 0 1px #ccc;
+        overflow: hidden;
+    }
+    
+    canvas {
+        display: block;
+        width: 100%;
+    }
+    
+    .graph-btn {
+        background: var(--graph);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    
+    .graph-btn:hover {
+        background: #7b1fa2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+        .container { padding: 10px; }
+        section { padding: 1.5rem; }
+        button { width: 100%; justify-content: center; }
+        .modal-content {
+            width: 95%;
+            max-height: 90vh;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .graph-container {
+            height: 400px;
+        }
+        .controls {
+            flex-direction: column;
+            align-items: center;
+        }
+        .graph-controls {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Étude des Fonctions du Second Degré</h1>
+        <p>Générateur d'exercices avec calculs exacts, graphiques et tableaux interactifs</p>
+        <button class="copyright-btn" onclick="openModal('copyrightModal')">
+            📜 Droits d'auteur
+        </button>
+    </header>
+    
+    <div class="section-container">
+        <section class="exercise">
+            <h2>Exercice</h2>
+            <div class="math-formula" id="eq1">Chargement...</div>
+            <p>On considère les points d'abscisses \(x_1 =\) <span id="v1-display"></span> et \(x_2 =\) <span id="v2-display"></span>.</p>
+            <div style="margin-top: 1.5rem; margin-left: 1rem;">
+                <ol style="line-height: 2;">
+                    <li>Calculer les images \( f\left(x_1\right) \) et \( f\left(x_2\right) \).</li>
+                    <li>
+                        <strong>a.</strong> Rappeler la forme canonique d'une fonction du second degré.<br/>
+                        <strong>b.</strong> Déterminer la valeur exacte de \( \alpha \) (sommet) par la méthode des différences, puis calculer \( \beta \).
+                    </li>
+                    <li>Résoudre l'équation \( f(x) = 0 \) (donner les valeurs exactes).</li>
+                    <li>Dresser le tableau de variation complet de \( f \).</li>
+                    <li>Dresser le tableau de signe de \( f(x) \).</li>
+                </ol>
+            </div>
+            <div class="controls">
+                <button class="btn-gen" onclick="App.generateNewValues()">
+                    <span>🎲</span> Générer Nouveaux
+                </button>
+                <button class="btn-sol" onclick="App.showExerciseSolution()">
+                    <span>📝</span> Voir Correction
+                </button>
+            </div>
+            <div class="solution-box" id="solution-ex1">
+                <div class="solution-header"><span>Correction Détaillée</span></div>
+                <div class="solution-content" id="solution-ex1-content"></div>
+            </div>
+        </section>
+        
+        <section class="application">
+            <h2>Application : Problème d'Optimisation</h2>
+            <p>Une entreprise modélise son bénéfice (en milliers d'euros) par la fonction :</p>
+            <div class="math-formula" id="math-opt"></div>
+            <p>Quel est le bénéfice maximal possible et pour quelle quantité produite ?</p>
+            <div class="controls">
+                <button class="btn-app" onclick="App.showApplicationSolution()">
+                    <span>📊</span> Voir Résultat
+                </button>
+            </div>
+            <div class="solution-box" id="solution-app">
+                <div class="solution-header"><span>Résultat Optimisation</span></div>
+                <div class="solution-content" id="solution-app-content"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- MODAL DES DROITS D'AUTEUR -->
+<div id="copyrightModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📜 Droits d'auteur & À propos</h2>
+            <button class="modal-close" onclick="closeModal('copyrightModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="info-box author">
+                <h3>👨‍💻 Auteur</h3>
+                <p><strong>Yann Merdy</strong> (yann.merdy@gmail.com) - Décembre 2025</p>
+                <p>Ce générateur interactif est conçu pour l'enseignement et l'apprentissage des fonctions du second degré avec corrections détaillées et représentations graphiques.</p>
+            </div>
+            
+            <div class="info-box license">
+                <h3>📄 Licence d'Utilisation Non Commerciale</h3>
+                <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par l'application sont la propriété intellectuelle exclusive de l'auteur, <strong>Yann Merdy</strong>.</p>
+            </div>
+            
+            <h3>✅ Conditions d'Utilisation Autorisées</h3>
+            <div class="info-box allowed">
+                <p><strong>Utilisation Privée et Éducative (Autorisée)</strong></p>
+                <p>Vous êtes autorisé.e à :</p>
+                <ul>
+                    <li>Utiliser ce code et son contenu à des fins personnelles et éducatives</li>
+                    <li>Copier et modifier le code pour un usage non lucratif</li>
+                    <li>Distribuer le code dans un contexte éducatif (cours, ateliers, formations)</li>
+                    <li>Adapter le contenu pour des besoins pédagogiques spécifiques</li>
+                </ul>
+            </div>
+            
+            <h3>🚫 Conditions d'Utilisation Interdites</h3>
+            <div class="info-box forbidden">
+                <p><strong>Utilisation Commerciale (Strictement Interdite)</strong></p>
+                <p>Est strictement interdite sans accord écrit préalable :</p>
+                <ul>
+                    <li>Toute utilisation à des fins commerciales ou lucratives</li>
+                    <li>L'intégration dans des produits ou services payants</li>
+                    <li>La reproduction partielle ou totale dans des publications commerciales</li>
+                    <li>L'utilisation dans des contextes professionnels à but lucratif</li>
+                    <li>La distribution via des plateformes payantes</li>
+                </ul>
+            </div>
+            
+            <h3>📝 Obligations</h3>
+            <div class="info-box obligations">
+                <p><strong>Attribution et Mention</strong></p>
+                <ul>
+                    <li>Toute reproduction ou modification doit conserver la mention de l'auteur originale : <strong>Yann Merdy</strong></li>
+                    <li>La présente notice de droits d'auteur doit être incluse dans toute distribution</li>
+                    <li>Les modifications apportées doivent être clairement indiquées</li>
+                </ul>
+            </div>
+            
+            <h3>📧 Contact pour Licences Commerciales</h3>
+            <p>Pour toute demande d'utilisation commerciale ou de licence spécifique :</p>
+            <p>
+                <a class="contact-link" href="mailto:yann.merdy@gmail.com">
+                    ✉️ yann.merdy@gmail.com
+                </a>
+            </p>
+            <p style="margin-top: 10px; font-style: italic; color: #666;">
+                Merci de respecter ces conditions qui permettent de maintenir ce projet éducatif accessible à tous.
+            </p>
+            
+            <div class="copyright-footer">
+                <p><strong>© 2025 - Yann Merdy - Tous droits réservés</strong></p>
+                <p>Dernière mise à jour : Décembre 2025</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GRAPHIQUE PARABOLE -->
+<div id="graphModal" class="modal graph-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📈 Tracé de la parabole</h2>
+            <button class="modal-close" onclick="closeModal('graphModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <h3 id="graphFunctionTitle">Fonction : \\( f(x) = ... \\)</h3>
+            
+            <div class="graph-controls">
+                <div class="graph-control-group">
+                    <h4>Zoom Global</h4>
+                    <div class="graph-control-buttons">
+                        <button class="graph-control-btn" onclick="Graph.zoomIn()">➕ Zoom avant</button>
+                        <button class="graph-control-btn" onclick="Graph.zoomOut()">➖ Zoom arrière</button>
+                        <button class="graph-control-btn" onclick="Graph.reset()">↺ Réinitialiser</button>
+                    </div>
+                </div>
+                
+                <div class="graph-control-group">
+                    <h4>Échelle Horizontale (X)</h4>
+                    <div class="graph-control-buttons">
+                        <button class="graph-control-btn small" onclick="Graph.scaleX(1.2)">➕</button>
+                        <button class="graph-control-btn small" onclick="Graph.scaleX(0.8)">➖</button>
+                        <button class="graph-control-btn" onclick="Graph.resetScaleX()">X↺</button>
+                    </div>
+                </div>
+                
+                <div class="graph-control-group">
+                    <h4>Échelle Verticale (Y)</h4>
+                    <div class="graph-control-buttons">
+                        <button class="graph-control-btn small" onclick="Graph.scaleY(1.2)">➕</button>
+                        <button class="graph-control-btn small" onclick="Graph.scaleY(0.8)">➖</button>
+                        <button class="graph-control-btn" onclick="Graph.resetScaleY()">Y↺</button>
+                    </div>
+                </div>
+                
+                <div class="graph-control-group">
+                    <h4>Déplacement</h4>
+                    <div class="graph-control-buttons">
+                        <button class="graph-control-btn" onclick="Graph.pan('left')">← Gauche</button>
+                        <button class="graph-control-btn" onclick="Graph.pan('right')">→ Droite</button>
+                        <button class="graph-control-btn" onclick="Graph.pan('up')">↑ Haut</button>
+                        <button class="graph-control-btn" onclick="Graph.pan('down')">↓ Bas</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="graph-scale-info">
+                <div>Échelle X: <span id="scaleXValue">1.0</span>x</div>
+                <div>Échelle Y: <span id="scaleYValue">1.0</span>x</div>
+                <div>Centre: (<span id="centerXValue">0.0</span>, <span id="centerYValue">0.0</span>)</div>
+            </div>
+            
+            <div class="graph-container">
+                <canvas id="graphCanvas"></canvas>
+            </div>
+            
+            <div class="graph-info">
+                <p><strong>Instructions :</strong> Cliquez-glisser pour déplacer • Molette pour zoomer • Double-clic pour centrer</p>
+                <p id="graphVertexInfo">Sommet : (..., ...)</p>
+                <p id="graphRootsInfo">Racines : ...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * MOTEUR MATHÉMATIQUE (du premier fichier)
+ */
+const MathEngine = {
+    gcd: (a, b) => b === 0 ? a : MathEngine.gcd(b, a % b),
+
+    Fraction: class {
+        constructor(n, d = 1) {
+            if (d === 0) throw new Error("Division par zéro");
+            if (d < 0) { n = -n; d = -d; }
+            const div = MathEngine.gcd(Math.abs(n), Math.abs(d));
+            this.n = n / div;
+            this.d = d / div;
+        }
+        add(other) { return new MathEngine.Fraction(this.n * other.d + other.n * this.d, this.d * other.d); }
+        sub(other) { return new MathEngine.Fraction(this.n * other.d - other.n * this.d, this.d * other.d); }
+        mul(other) { return new MathEngine.Fraction(this.n * other.n, this.d * other.d); }
+        div(other) { return new MathEngine.Fraction(this.n * other.d, this.d * other.n); }
+        sq() { return new MathEngine.Fraction(this.n * this.n, this.d * this.d); }
+        val() { return this.n / this.d; }
+        
+        toTex(isCoeff = false) {
+            if (isCoeff) {
+                if (this.d === 1) {
+                    if (this.n === 1) return "";
+                    if (this.n === -1) return "-";
+                    return `${this.n}`;
+                }
+            }
+            if (this.d === 1) return `${this.n}`;
+            return `\\dfrac{${this.n}}{${this.d}}`;
+        }
+        
+        toCanvasStr() {
+            if (this.d === 1) return `${this.n}`;
+            return `\\dfrac{${this.n}}{${this.d}}`;
+        }
+        
+        toString() {
+            if (this.d === 1) return `${this.n}`;
+            return `\\dfrac{${this.n}}{${this.d}}`;
+        }
+    },
+
+    polyToTex: (a, b, c) => {
+        let tex = "";
+        if (a === 1) tex += "x^2";
+        else if (a === -1) tex += "-x^2";
+        else tex += `${a}x^2`;
+        
+        if (b !== 0) {
+            if (b > 0) tex += ` + ${b === 1 ? "" : b}x`;
+            else tex += ` - ${Math.abs(b) === 1 ? "" : Math.abs(b)}x`;
+        }
+        
+        if (c !== 0) {
+            tex += ` ${c > 0 ? "+" : "-"} ${Math.abs(c)}`;
+        } else if (tex === "") {
+            tex = "0";
+        }
+        return tex;
+    },
+
+    sqrtToTex: (k) => { 
+        if (k.n < 0) return "Impossible";
+        const sqrtN = Math.sqrt(k.n);
+        const sqrtD = Math.sqrt(k.d);
+        if (Number.isInteger(sqrtN) && Number.isInteger(sqrtD)) {
+            return new MathEngine.Fraction(sqrtN, sqrtD).toTex();
+        }
+        return `\\sqrt{${k.toTex()}}`;
+    },
+
+    sqrtToCanvasStr: (k) => {
+        const sqrtN = Math.sqrt(k.n);
+        const sqrtD = Math.sqrt(k.d);
+        if (Number.isInteger(sqrtN) && Number.isInteger(sqrtD)) {
+            return new MathEngine.Fraction(sqrtN, sqrtD).toCanvasStr();
+        }
+        return `\\sqrt{${k.toCanvasStr()}}`;
+    }
+};
+
+/**
+ * MOTEUR GRAPHIQUE CANVAS pour tableaux (du premier fichier)
+ */
+const CanvasRender = {
+    fonts: {
+        math: 'italic 20px "Times New Roman", Times, serif',
+        text: 'normal 18px "Segoe UI", sans-serif',
+        symbol: 'normal 22px "Times New Roman", serif'
+    },
+
+    setupCanvas: (canvasId, height = 200) => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return null;
+        
+        const container = canvas.parentElement;
+        const rect = container.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${rect.width}px`;
+        canvas.style.height = `${height}px`;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, rect.width, height);
+        
+        return { ctx, width: rect.width, height };
+    },
+
+    getMathWidth: (ctx, text) => {
+        text = text.trim();
+        let braceDepth = 0;
+        for(let i=1; i<text.length; i++) {
+            if(text[i] === '{') braceDepth++;
+            else if(text[i] === '}') braceDepth--;
+            else if(braceDepth === 0 && (text[i] === '+' || text[i] === '-')) {
+                const p1 = text.substring(0, i);
+                const p2 = text.substring(i+1);
+                ctx.font = CanvasRender.fonts.math;
+                const wOp = ctx.measureText(" " + text[i] + " ").width;
+                return CanvasRender.getMathWidth(ctx, p1) + wOp + CanvasRender.getMathWidth(ctx, p2);
+            }
+        }
+        const fracMatch = text.match(/^\\dfrac\{(.+)\}\{(.+)\}$/);
+        if (fracMatch) return Math.max(CanvasRender.getMathWidth(ctx, fracMatch[1]), CanvasRender.getMathWidth(ctx, fracMatch[2])) + 8;
+        const sqrtMatch = text.match(/^\\sqrt\{(.+)\}$/);
+        if (sqrtMatch) return CanvasRender.getMathWidth(ctx, sqrtMatch[1]) + 20;
+        if (text.includes("infty")) {
+            ctx.font = "24px sans-serif";
+            return ctx.measureText(text.replace("\\infty", "∞").replace("+", "+").replace("-", "-")).width;
+        }
+        ctx.font = CanvasRender.fonts.math;
+        return ctx.measureText(text).width;
+    },
+
+    drawMath: (ctx, text, x, y, align = "center") => {
+        text = text.trim();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+
+        let braceDepth = 0;
+        let splitIdx = -1;
+        for(let i=1; i<text.length; i++) {
+            if(text[i] === '{') braceDepth++;
+            else if(text[i] === '}') braceDepth--;
+            else if(braceDepth === 0 && (text[i] === '+' || text[i] === '-')) {
+                splitIdx = i;
+                break;
+            }
+        }
+
+        if (splitIdx !== -1) {
+            const part1 = text.substring(0, splitIdx);
+            const op = text[splitIdx];
+            const part2 = text.substring(splitIdx + 1);
+            const w1 = CanvasRender.getMathWidth(ctx, part1);
+            const wOp = ctx.measureText(" " + op + " ").width;
+            const w2 = CanvasRender.getMathWidth(ctx, part2);
+            const totalW = w1 + wOp + w2;
+            let startX = x;
+            if (align === "center") startX = x - totalW / 2;
+            else if (align === "right") startX = x - totalW;
+            CanvasRender.drawMath(ctx, part1, startX + w1/2, y, "center");
+            ctx.font = CanvasRender.fonts.math;
+            ctx.fillText(op, startX + w1 + wOp/2, y);
+            CanvasRender.drawMath(ctx, part2, startX + w1 + wOp + w2/2, y, "center");
+            return;
+        }
+
+        const fracMatch = text.match(/^\\dfrac\{(.+)\}\{(.+)\}$/);
+        if (fracMatch) {
+            const num = fracMatch[1], den = fracMatch[2];
+            const maxW = Math.max(CanvasRender.getMathWidth(ctx, num), CanvasRender.getMathWidth(ctx, den));
+            CanvasRender.drawMath(ctx, num, x, y - 15, "center");
+            CanvasRender.drawMath(ctx, den, x, y + 15, "center");
+            ctx.beginPath(); ctx.moveTo(x - maxW/2 - 4, y); ctx.lineTo(x + maxW/2 + 4, y);
+            ctx.lineWidth = 1.2; ctx.strokeStyle = "black"; ctx.stroke();
+            return;
+        }
+
+        const sqrtMatch = text.match(/^\\sqrt\{(.+)\}$/);
+        if (sqrtMatch) {
+            const content = sqrtMatch[1];
+            const w = CanvasRender.getMathWidth(ctx, content);
+            
+            // Détection si le contenu est une fraction pour augmenter la taille de la racine
+            const isFrac = content.includes("dfrac");
+            const h = isFrac ? 55 : 20;
+            const offsetYText = isFrac ? 0 : 2;
+
+            const offsetX = x + 7;
+            CanvasRender.drawMath(ctx, content, offsetX, y + offsetYText, "center"); 
+            const sX = offsetX - w/2 - 8;
+            ctx.beginPath(); ctx.lineWidth = 1.5; ctx.lineJoin = "round";
+            ctx.moveTo(sX, y); ctx.lineTo(sX + 3, y + h/2 + 2); ctx.lineTo(sX + 7, y - h/2 - 2);
+            ctx.lineTo(offsetX + w/2 + 6, y - h/2 - 2); ctx.lineTo(offsetX + w/2 + 6, y - h/2 + 5);
+            ctx.stroke();
+            return;
+        }
+
+        if (text.includes("infty")) {
+            ctx.font = "24px sans-serif";
+            ctx.fillText(text.replace("\\infty", "∞").replace("+", "+").replace("-", "-"), x, y);
+        } else {
+            ctx.font = CanvasRender.fonts.math;
+            ctx.fillText(text, x, y);
+        }
+    },
+
+    drawVariationTable: (canvasId, data) => {
+        const setup = CanvasRender.setupCanvas(canvasId, 220);
+        if (!setup) return;
+        const { ctx, width, height } = setup;
+        const colHeaderW = width * 0.15, rowHeaderH = 50;
+        ctx.strokeStyle = "#444"; ctx.lineWidth = 1.5;
+        ctx.strokeRect(1, 1, width - 2, height - 2);
+        ctx.beginPath(); ctx.moveTo(0, rowHeaderH); ctx.lineTo(width, rowHeaderH); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(colHeaderW, 0); ctx.lineTo(colHeaderW, height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(colHeaderW + 4, 0); ctx.lineTo(colHeaderW + 4, height); ctx.stroke();
+        ctx.font = "italic bold 20px 'Times New Roman'"; ctx.textAlign = "center"; ctx.fillStyle = "black";
+        ctx.fillText("x", colHeaderW / 2, rowHeaderH / 2 + 7);
+        ctx.fillText("f(x)", colHeaderW / 2, rowHeaderH + (height - rowHeaderH) / 2);
+        const zoneW = width - (colHeaderW + 4), startX = colHeaderW + 4;
+        const x1 = startX + zoneW * 0.1, x2 = startX + zoneW * 0.5, x3 = startX + zoneW * 0.9;
+        CanvasRender.drawMath(ctx, "-\\infty", x1, rowHeaderH / 2);
+        CanvasRender.drawMath(ctx, data.alpha, x2, rowHeaderH / 2);
+        CanvasRender.drawMath(ctx, "+\\infty", x3, rowHeaderH / 2);
+        const yTop = rowHeaderH + 30, yBot = height - 30;
+        ctx.strokeStyle = "#1565c0"; ctx.lineWidth = 2;
+        if (data.a > 0) {
+            CanvasRender.drawMath(ctx, "+\\infty", x1, yTop);
+            CanvasRender.drawMath(ctx, data.beta, x2, yBot);
+            CanvasRender.drawMath(ctx, "+\\infty", x3, yTop);
+            CanvasRender.drawArrow(ctx, x1 + 25, yTop + 10, x2 - 25, yBot - 5);
+            CanvasRender.drawArrow(ctx, x2 + 25, yBot - 5, x3 - 25, yTop + 10);
+        } else {
+            CanvasRender.drawMath(ctx, "-\\infty", x1, yBot);
+            CanvasRender.drawMath(ctx, data.beta, x2, yTop);
+            CanvasRender.drawMath(ctx, "-\\infty", x3, yBot);
+            CanvasRender.drawArrow(ctx, x1 + 25, yBot - 5, x2 - 25, yTop + 10);
+            CanvasRender.drawArrow(ctx, x2 + 25, yTop + 10, x3 - 25, yBot - 5);
+        }
+    },
+
+    drawSignTable: (canvasId, data) => {
+        const setup = CanvasRender.setupCanvas(canvasId, 120);
+        if (!setup) return;
+        const { ctx, width, height } = setup;
+        const colHeaderW = width * 0.15, rowHeaderH = 50;
+        ctx.strokeStyle = "#444"; ctx.lineWidth = 1.5;
+        ctx.strokeRect(1, 1, width - 2, height - 2);
+        ctx.beginPath(); ctx.moveTo(0, rowHeaderH); ctx.lineTo(width, rowHeaderH); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(colHeaderW, 0); ctx.lineTo(colHeaderW, height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(colHeaderW + 4, 0); ctx.lineTo(colHeaderW + 4, height); ctx.stroke();
+        ctx.font = "italic bold 18px 'Times New Roman'"; ctx.textAlign = "center"; ctx.fillStyle = "black";
+        ctx.fillText("x", colHeaderW / 2, rowHeaderH / 2 + 7);
+        ctx.fillText("f(x)", colHeaderW / 2, rowHeaderH + (height - rowHeaderH) / 2);
+        const zoneW = width - (colHeaderW + 4), startX = colHeaderW + 4;
+        const yVal = rowHeaderH / 2, ySign = rowHeaderH + (height - rowHeaderH) / 2;
+        const drawZeroLine = (xPos) => {
+            ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.moveTo(xPos, rowHeaderH); ctx.lineTo(xPos, height); ctx.strokeStyle = "#888"; ctx.stroke(); ctx.setLineDash([]);
+            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(xPos, ySign, 12, 0, Math.PI * 2); ctx.fill();
+            ctx.lineWidth = 1; ctx.strokeStyle = "#333"; ctx.stroke();
+            ctx.fillStyle = "black"; ctx.font = "normal 16px sans-serif"; ctx.fillText("0", xPos, ySign);
+        };
+        if (data.roots.length === 0) {
+            CanvasRender.drawMath(ctx, "-\\infty", startX + zoneW * 0.1, yVal);
+            CanvasRender.drawMath(ctx, "+\\infty", startX + zoneW * 0.9, yVal);
+            ctx.font = "bold 24px sans-serif"; ctx.fillText(data.signs[0], startX + zoneW * 0.5, ySign);
+        } else if (data.roots.length === 1) {
+            CanvasRender.drawMath(ctx, "-\\infty", startX + zoneW * 0.1, yVal);
+            CanvasRender.drawMath(ctx, data.roots[0], startX + zoneW * 0.5, yVal);
+            CanvasRender.drawMath(ctx, "+\\infty", startX + zoneW * 0.9, yVal);
+            drawZeroLine(startX + zoneW * 0.5);
+            ctx.font = "bold 24px sans-serif"; ctx.fillText(data.signs[0], startX + zoneW * 0.25, ySign); ctx.fillText(data.signs[0], startX + zoneW * 0.75, ySign);
+        } else {
+            CanvasRender.drawMath(ctx, "-\\infty", startX + zoneW * 0.1, yVal);
+            CanvasRender.drawMath(ctx, data.roots[0], startX + zoneW * 0.35, yVal);
+            CanvasRender.drawMath(ctx, data.roots[1], startX + zoneW * 0.65, yVal);
+            CanvasRender.drawMath(ctx, "+\\infty", startX + zoneW * 0.9, yVal);
+            drawZeroLine(startX + zoneW * 0.35); drawZeroLine(startX + zoneW * 0.65);
+            ctx.font = "bold 24px sans-serif"; ctx.fillText(data.signs[0], startX + zoneW * 0.18, ySign); ctx.fillText(data.signs[1], startX + zoneW * 0.5, ySign); ctx.fillText(data.signs[2], startX + zoneW * 0.82, ySign);
+        }
+    },
+
+    drawArrow: (ctx, fromX, fromY, toX, toY) => {
+        const headlen = 10, angle = Math.atan2(toY - fromY, toX - fromX);
+        ctx.beginPath(); ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(toX, toY); ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6)); ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fillStyle = "#1565c0"; ctx.fill();
+    }
+};
+
+/**
+ * SYSTÈME GRAPHIQUE PARABOLE AMÉLIORÉ
+ */
+const Graph = {
+    state: {
+        scaleX: 1,
+        scaleY: 1,
+        offsetX: 0,
+        offsetY: 0,
+        isDragging: false,
+        lastX: 0,
+        lastY: 0,
+        baseRange: 10 // Plage de base pour chaque unité d'échelle
+    },
+
+    currentFunction: null,
+
+    openModal: function() {
+        if (!this.currentFunction) return;
+        
+        const f = this.currentFunction;
+        const functionTex = MathEngine.polyToTex(f.a, f.b, f.c);
+        const titleElement = document.getElementById('graphFunctionTitle');
+        titleElement.innerHTML = `Fonction : \\( f(x) = ${functionTex} \\)`;
+        
+        // Forcer MathJax à interpréter le LaTeX
+        if (window.MathJax) {
+            MathJax.typesetPromise([titleElement]).catch(err => console.error(err));
+        }
+        
+        document.getElementById('graphVertexInfo').textContent = 
+            `Sommet : (${f.alpha.toFixed(2)}, ${f.beta.toFixed(2)})`;
+        
+        if (f.roots.length === 0) {
+            document.getElementById('graphRootsInfo').textContent = 'Pas de racine réelle';
+        } else if (f.roots.length === 1) {
+            document.getElementById('graphRootsInfo').textContent = 
+                `Racine double : x = ${f.roots[0].toFixed(2)}`;
+        } else {
+            document.getElementById('graphRootsInfo').textContent = 
+                `Racines : x₁ = ${f.roots[0].toFixed(2)}, x₂ = ${f.roots[1].toFixed(2)}`;
+        }
+        
+        this.updateScaleInfo();
+        openModal('graphModal');
+        setTimeout(() => this.draw(), 100);
+    },
+
+    updateScaleInfo: function() {
+        document.getElementById('scaleXValue').textContent = this.state.scaleX.toFixed(1);
+        document.getElementById('scaleYValue').textContent = this.state.scaleY.toFixed(1);
+        document.getElementById('centerXValue').textContent = this.state.offsetX.toFixed(1);
+        document.getElementById('centerYValue').textContent = this.state.offsetY.toFixed(1);
+    },
+
+    draw: function() {
+        const canvas = document.getElementById('graphCanvas');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width = canvas.clientWidth;
+        const height = canvas.height = canvas.clientHeight;
+        
+        const f = this.currentFunction;
+        if (!f) return;
+        
+        // Effacer le canvas
+        ctx.clearRect(0, 0, width, height);
+        
+        // Définir la zone visible avec échelles indépendantes
+        const scaleX = this.state.scaleX;
+        const scaleY = this.state.scaleY;
+        const offsetX = this.state.offsetX;
+        const offsetY = this.state.offsetY;
+        const baseRange = this.state.baseRange;
+        
+        const xMin = -baseRange * scaleX + offsetX;
+        const xMax = baseRange * scaleX + offsetX;
+        const yMin = -baseRange * scaleY + offsetY;
+        const yMax = baseRange * scaleY + offsetY;
+        
+        // Fonction de conversion
+        const toCanvasX = (x) => ((x - xMin) / (xMax - xMin)) * width;
+        const toCanvasY = (y) => height - ((y - yMin) / (yMax - yMin)) * height;
+        
+        // Dessiner le quadrillage
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1;
+        
+        // Quadrillage vertical (basé sur scaleX)
+        const xStep = this.getGridStep(scaleX);
+        let x = Math.ceil(xMin / xStep) * xStep;
+        while (x <= xMax) {
+            const canvasX = toCanvasX(x);
+            ctx.beginPath();
+            ctx.moveTo(canvasX, 0);
+            ctx.lineTo(canvasX, height);
+            ctx.stroke();
+            
+            // Numéro sur l'axe X
+            if (Math.abs(x) > 0.1) {
+                ctx.fillStyle = '#666';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(x.toFixed(1), canvasX, toCanvasY(0) + 15);
+            }
+            
+            x += xStep;
+        }
+        
+        // Quadrillage horizontal (basé sur scaleY)
+        const yStep = this.getGridStep(scaleY);
+        let y = Math.ceil(yMin / yStep) * yStep;
+        while (y <= yMax) {
+            const canvasY = toCanvasY(y);
+            ctx.beginPath();
+            ctx.moveTo(0, canvasY);
+            ctx.lineTo(width, canvasY);
+            ctx.stroke();
+            
+            // Numéro sur l'axe Y
+            if (Math.abs(y) > 0.1) {
+                ctx.fillStyle = '#666';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(y.toFixed(1), toCanvasX(0) - 5, canvasY + 4);
+            }
+            
+            y += yStep;
+        }
+        
+        // Dessiner les axes
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        
+        // Axe X
+        const originY = toCanvasY(0);
+        if (originY >= 0 && originY <= height) {
+            ctx.beginPath();
+            ctx.moveTo(0, originY);
+            ctx.lineTo(width, originY);
+            ctx.stroke();
+            
+            // Flèche X
+            ctx.beginPath();
+            ctx.moveTo(width - 10, originY - 5);
+            ctx.lineTo(width, originY);
+            ctx.lineTo(width - 10, originY + 5);
+            ctx.fillStyle = '#333';
+            ctx.fill();
+            
+            // Label X
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('x', width - 5, originY - 10);
+        }
+        
+        // Axe Y
+        const originX = toCanvasX(0);
+        if (originX >= 0 && originX <= width) {
+            ctx.beginPath();
+            ctx.moveTo(originX, 0);
+            ctx.lineTo(originX, height);
+            ctx.stroke();
+            
+            // Flèche Y
+            ctx.beginPath();
+            ctx.moveTo(originX - 5, 10);
+            ctx.lineTo(originX, 0);
+            ctx.lineTo(originX + 5, 10);
+            ctx.fill();
+            
+            // Label Y
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('y', originX + 10, 15);
+        }
+        
+        // Dessiner la parabole
+        ctx.strokeStyle = f.a > 0 ? '#1565c0' : '#d32f2f';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        
+        const numPoints = 400;
+        let firstPoint = true;
+        for (let i = 0; i <= numPoints; i++) {
+            const x = xMin + (xMax - xMin) * (i / numPoints);
+            const y = f.a * x * x + f.b * x + f.c;
+            
+            const canvasX = toCanvasX(x);
+            const canvasY = toCanvasY(y);
+            
+            // Vérifier si le point est dans la zone visible
+            if (canvasY >= -50 && canvasY <= height + 50) {
+                if (firstPoint) {
+                    ctx.moveTo(canvasX, canvasY);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(canvasX, canvasY);
+                }
+            } else {
+                firstPoint = true;
+            }
+        }
+        ctx.stroke();
+        
+        // Dessiner le sommet
+        const vertexX = toCanvasX(f.alpha);
+        const vertexY = toCanvasY(f.beta);
+        if (vertexX >= 0 && vertexX <= width && vertexY >= 0 && vertexY <= height) {
+            ctx.fillStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.arc(vertexX, vertexY, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`S(${f.alpha.toFixed(1)}, ${f.beta.toFixed(1)})`, vertexX, vertexY - 10);
+        }
+        
+        // Dessiner les racines
+        f.roots.forEach((root, index) => {
+            const rootX = toCanvasX(root);
+            const rootY = toCanvasY(0);
+            if (rootX >= 0 && rootX <= width) {
+                ctx.fillStyle = '#2e7d32';
+                ctx.beginPath();
+                ctx.arc(rootX, rootY, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`x${index+1}=${root.toFixed(1)}`, rootX, rootY + 15);
+            }
+        });
+        
+        // Dessiner les points donnés dans l'exercice
+        const point1X = toCanvasX(f.v1);
+        const point1Y = toCanvasY(f.fv1);
+        const point2X = toCanvasX(f.v2);
+        const point2Y = toCanvasY(f.fv2);
+        
+        if (point1X >= 0 && point1X <= width && point1Y >= 0 && point1Y <= height) {
+            ctx.fillStyle = '#9c27b0';
+            ctx.beginPath();
+            ctx.arc(point1X, point1Y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`A(${f.v1}, ${f.fv1.toFixed(1)})`, point1X, point1Y - 10);
+        }
+        
+        if (point2X >= 0 && point2X <= width && point2Y >= 0 && point2Y <= height) {
+            ctx.fillStyle = '#9c27b0';
+            ctx.beginPath();
+            ctx.arc(point2X, point2Y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`B(${f.v2}, ${f.fv2.toFixed(1)})`, point2X, point2Y - 10);
+        }
+    },
+
+    getGridStep: function(scale) {
+        // Ajuste le pas de la grille en fonction de l'échelle
+        if (scale < 0.5) return 0.1;
+        if (scale < 2) return 0.5;
+        if (scale < 5) return 1;
+        if (scale < 10) return 2;
+        return 5;
+    },
+
+    // NOUVELLES FONCTIONS POUR LES ÉCHELLES INDÉPENDANTES
+    scaleX: function(factor) {
+        this.state.scaleX *= factor;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    scaleY: function(factor) {
+        this.state.scaleY *= factor;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    resetScaleX: function() {
+        this.state.scaleX = 1;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    resetScaleY: function() {
+        this.state.scaleY = 1;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    // DÉPLACEMENT PAR BOUTONS
+    pan: function(direction) {
+        const panAmount = 2 * Math.min(this.state.scaleX, this.state.scaleY);
+        switch(direction) {
+            case 'left':
+                this.state.offsetX -= panAmount;
+                break;
+            case 'right':
+                this.state.offsetX += panAmount;
+                break;
+            case 'up':
+                this.state.offsetY += panAmount;
+                break;
+            case 'down':
+                this.state.offsetY -= panAmount;
+                break;
+        }
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    // FONCTIONS EXISTANTES MODIFIÉES
+    zoomIn: function() {
+        this.state.scaleX *= 0.8;
+        this.state.scaleY *= 0.8;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    zoomOut: function() {
+        this.state.scaleX *= 1.2;
+        this.state.scaleY *= 1.2;
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    reset: function() {
+        this.state = {
+            scaleX: 1,
+            scaleY: 1,
+            offsetX: 0,
+            offsetY: 0,
+            isDragging: false,
+            lastX: 0,
+            lastY: 0,
+            baseRange: 10
+        };
+        this.updateScaleInfo();
+        this.draw();
+    },
+
+    initEvents: function() {
+        const canvas = document.getElementById('graphCanvas');
+        if (!canvas) return;
+        
+        // Gestion du déplacement par cliquer-glisser
+        canvas.addEventListener('mousedown', (e) => {
+            this.state.isDragging = true;
+            this.state.lastX = e.clientX;
+            this.state.lastY = e.clientY;
+            canvas.style.cursor = 'grabbing';
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (!this.state.isDragging) return;
+            
+            const dx = e.clientX - this.state.lastX;
+            const dy = e.clientY - this.state.lastY;
+            
+            // Ajuster le déplacement en fonction de l'échelle
+            this.state.offsetX -= dx * this.state.scaleX * 0.02;
+            this.state.offsetY += dy * this.state.scaleY * 0.02;
+            
+            this.state.lastX = e.clientX;
+            this.state.lastY = e.clientY;
+            
+            this.updateScaleInfo();
+            this.draw();
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            this.state.isDragging = false;
+            canvas.style.cursor = 'grab';
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            this.state.isDragging = false;
+            canvas.style.cursor = 'grab';
+        });
+        
+        // Gestion du zoom avec molette (zoom global)
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
+            this.state.scaleX *= zoomFactor;
+            this.state.scaleY *= zoomFactor;
+            this.updateScaleInfo();
+            this.draw();
+        });
+        
+        // Double-clic pour centrer sur l'origine
+        canvas.addEventListener('dblclick', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Convertir les coordonnées canvas en coordonnées mathématiques
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const scaleX = this.state.scaleX;
+            const scaleY = this.state.scaleY;
+            const offsetX = this.state.offsetX;
+            const offsetY = this.state.offsetY;
+            const baseRange = this.state.baseRange;
+            
+            const xMin = -baseRange * scaleX + offsetX;
+            const xMax = baseRange * scaleX + offsetX;
+            const yMin = -baseRange * scaleY + offsetY;
+            const yMax = baseRange * scaleY + offsetY;
+            
+            const mathX = xMin + (x / width) * (xMax - xMin);
+            const mathY = yMax - (y / height) * (yMax - yMin);
+            
+            // Centrer sur ce point
+            this.state.offsetX = mathX;
+            this.state.offsetY = mathY;
+            
+            this.updateScaleInfo();
+            this.draw();
+        });
+    }
+};
+
+/**
+ * LOGIQUE APPLICATIVE PRINCIPALE
+ */
+const App = {
+    data: { 
+        p1: { a: 0, b: 0, c: 0 }, 
+        opt: { a: 0, b: 0, c: 0 }, 
+        v1: 0, v2: 0, 
+        lastVarData: null, 
+        lastSignData: null 
+    },
+
+    init: () => {
+        App.generateNewValues();
+        Graph.initEvents();
+        
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if(App.data.lastVarData) CanvasRender.drawVariationTable('varCanvas', App.data.lastVarData);
+                if(App.data.lastSignData) CanvasRender.drawSignTable('signCanvas', App.data.lastSignData);
+                if(Graph.currentFunction && document.getElementById('graphModal').style.display === 'block') {
+                    Graph.draw();
+                }
+            }, 100);
+        });
+    },
+
+    getRandom: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+
+    generateNewValues: () => {
+        do { App.data.p1.a = App.getRandom(-3, 3); } while (App.data.p1.a === 0);
+        App.data.p1.b = App.getRandom(-8, 8);
+        App.data.p1.c = App.getRandom(-10, 10);
+        App.data.v1 = App.getRandom(-4, 0);
+        do { App.data.v2 = App.getRandom(1, 5); } while (App.data.v2 === App.data.v1);
+        App.data.opt.a = App.getRandom(-4, -1);
+        App.data.opt.b = App.getRandom(10, 60);
+        App.data.opt.c = App.getRandom(-100, -10);
+        App.updateDisplay();
+    },
+
+    updateDisplay: () => {
+        const d = App.data;
+        document.getElementById('eq1').innerHTML = `\\( f(x) = ${MathEngine.polyToTex(d.p1.a, d.p1.b, d.p1.c)} \\)`;
+        document.getElementById('v1-display').innerHTML = `\\( ${d.v1} \\)`;
+        document.getElementById('v2-display').innerHTML = `\\( ${d.v2} \\)`;
+        document.getElementById('math-opt').innerHTML = `\\( B(x) = ${MathEngine.polyToTex(d.opt.a, d.opt.b, d.opt.c)} \\)`;
+        document.getElementById('solution-ex1').style.display = 'none';
+        document.getElementById('solution-app').style.display = 'none';
+        if (window.MathJax) MathJax.typesetPromise();
+    },
+
+    solveExercise: () => {
+        const { a, b, c } = App.data.p1;
+        const v1 = App.data.v1, v2 = App.data.v2;
+        const f = (x) => a*x*x + b*x + c;
+        const fv1 = f(v1), fv2 = f(v2);
+
+        // Helper pour protéger les valeurs négatives après un signe
+        const fmtP = (n) => (typeof n === "number" && n < 0) || (typeof n === "string" && n.startsWith("-")) ? `(${n})` : n;
+
+        const alphaFrac = new MathEngine.Fraction(-b, 2*a);
+        const alphaTex = alphaFrac.toTex();
+        const alphaCanvas = alphaFrac.toCanvasStr();
+        
+        const term1 = alphaFrac.sq().mul(new MathEngine.Fraction(a, 1));
+        const term2 = alphaFrac.mul(new MathEngine.Fraction(b, 1));
+        const term3 = new MathEngine.Fraction(c, 1);
+        const betaFrac = term1.add(term2).add(term3);
+        const betaTex = betaFrac.toTex();
+        const betaCanvas = betaFrac.toCanvasStr();
+
+        const minusBeta = new MathEngine.Fraction(-betaFrac.n, betaFrac.d);
+        const k = minusBeta.mul(new MathEngine.Fraction(1, a));
+        
+        let html = "";
+        
+        html += `<div class="step"><h3>1. Calcul des images</h3>`;
+        html += `<p>Pour \\( x_1 = ${v1} \\) : \\( f(${v1}) = ${a}(${v1})^2 + (${b})(${v1}) + (${c}) = \\mathbf{${fv1}} \\)</p>`;
+        html += `<p>Pour \\( x_2 = ${v2} \\) : \\( f(${v2}) = ${a}(${v2})^2 + (${b})(${v2}) + (${c}) = \\mathbf{${fv2}} \\)</p></div>`;
+
+        const diffF = fv1 - fv2, diffX = v1 - v2, sumX = v1 + v2;
+        const val_step_div_a = new MathEngine.Fraction(diffF, a);
+        const val_step_div_brackets = val_step_div_a.div(new MathEngine.Fraction(diffX, 1));
+        
+        html += `<div class="step"><h3>2. Forme Canonique et Sommet</h3>`;
+        html += `<div class="method-box">
+                    <p><strong>Rappel :</strong> La forme canonique est \\( f(x) = a(x - \\alpha)^2 + \\beta \\).</p>
+                    <p><strong>Méthode des différences :</strong> \\( f(x_1) - f(x_2) = a(x_1 - x_2)(x_1 + x_2 - 2\\alpha) \\)</p>
+                 </div>`;
+        html += `<p>\\( ${fv1} - ${fmtP(fv2)} = ${a}(${v1} - ${fmtP(v2)})(${v1} + ${fmtP(v2)} - 2\\alpha) \\)</p>`;
+        html += `<p>\\( ${diffF} = ${a}(${diffX})(${sumX} - 2\\alpha) \\)</p>`;
+        html += `<p>\\( ${val_step_div_a.toTex()} = ${diffX}(${sumX} - 2\\alpha) \\)</p>`;
+        html += `<p>\\( ${val_step_div_brackets.toTex()} = ${sumX} - 2\\alpha \\implies 2\\alpha = ${sumX} - \\left(${val_step_div_brackets.toTex()}\\right) \\)</p>`;
+        html += `<p>On trouve \\( \\alpha = \\mathbf{${alphaTex}} \\)</p>`;
+        html += `<p>Calcul de \\( \\beta = f(\\alpha) \\) : \\( \\beta = \\mathbf{${betaTex}} \\)</p></div>`;
+
+        html += `<div class="step"><h3>3. Résolution de \\( f(x) = 0 \\)</h3>`;
+        html += `<p>On utilise la forme canonique : \\( ${a}\\left(x - \\left(${alphaTex}\\right)\\right)^2 + \\left(${betaTex}\\right) = 0 \\)</p>`;
+        html += `<p>\\( (x - (${alphaTex}))^2 = \\dfrac{ -\\left(${betaTex}\\right) }{ ${a} } = ${k.toTex()} \\)</p>`;
+        
+        let root1Tex, root2Tex, root1Canvas, root2Canvas, hasRoots = false, singleRoot = false;
+        const roots = [];
+
+        if (k.n < 0) {
+            html += `<p>Comme \\( ${k.toTex()} < 0 \\), l'équation n'admet <strong>pas de solution réelle</strong>.</p>`;
+        } else if (k.n === 0) {
+            hasRoots = true; singleRoot = true;
+            root1Tex = alphaTex; root1Canvas = alphaCanvas;
+            roots.push(alphaFrac.val());
+            html += `<p>Une unique solution : \\( x = \\alpha = ${alphaTex} \\)</p>`;
+        } else {
+            hasRoots = true;
+            const sqrtN = Math.sqrt(k.n), sqrtD = Math.sqrt(k.d);
+            if (Number.isInteger(sqrtN) && Number.isInteger(sqrtD)) {
+                const rK = new MathEngine.Fraction(sqrtN, sqrtD);
+                const rx1 = alphaFrac.sub(rK), rx2 = alphaFrac.add(rK);
+                root1Tex = rx1.toTex(); root2Tex = rx2.toTex();
+                root1Canvas = rx1.toCanvasStr(); root2Canvas = rx2.toCanvasStr();
+                roots.push(rx1.val(), rx2.val());
+            } else {
+                let nA = alphaFrac.n * Math.sign(alphaFrac.d), dA = Math.abs(alphaFrac.d);
+                let nK = k.n, dK_sqrt = Math.sqrt(k.d);
+                if (Number.isInteger(dK_sqrt)) {
+                    const lcm = (x, y) => (x * y) / MathEngine.gcd(x, y);
+                    const commonD = lcm(dA, dK_sqrt), mulA = commonD / dA, mulK = commonD / dK_sqrt;
+                    let numPartA = nA * mulA, numPartK = mulK;
+                    const buildStr = (sign) => {
+                        let num = `${numPartA}${sign === '-' ? ' - ' : ' + '}${numPartK !== 1 ? numPartK : ''}\\sqrt{${nK}}`;
+                        return commonD === 1 ? num : `\\dfrac{${num}}{${commonD}}`;
+                    };
+                    root1Tex = buildStr('-'); root2Tex = buildStr('+'); root1Canvas = root1Tex; root2Canvas = root2Tex;
+                } else {
+                    const sk = MathEngine.sqrtToTex(k);
+                    root1Tex = `${alphaTex} - ${sk}`; root2Tex = `${alphaTex} + ${sk}`;
+                    root1Canvas = root1Tex; root2Canvas = root2Tex;
+                }
+                // Approximation pour le graphique
+                const sqrtK = Math.sqrt(k.val());
+                roots.push(alphaFrac.val() - sqrtK, alphaFrac.val() + sqrtK);
+            }
+            html += `<p>L'équation admet deux racines :</p>`;
+            html += `<p>\\( x_1 = \\mathbf{${root1Tex}} \\) et \\( x_2 = \\mathbf{${root2Tex}} \\)</p>`;
+        }
+        
+        html += `</div><div class="step"><h3>4. Tableau de Variation</h3>`;
+        html += `<p>La fonction \\(f\\) est obtenue par : <ul><ul><li>translation horizontale de vecteur \\(${alphaTex} \\vec{i}\\),</li> <li>dilatation de coefficient \\(${a}\\) (\\( a = ${a} \\) est ${a > 0 ? "positif : Sourire \\(\\Rightarrow\\) Branches dirigées vers le haut" : "négatif : Triste \\(\\Rightarrow\\) Branches dirigées vers le bas"}),</li> <li>translation verticale de vecteur \\(${betaTex} \\vec{j}\\).</li></ul></ul></p>`;
+        html += `<div class="canvas-wrapper"><canvas id="varCanvas"></canvas></div></div>`;
+        App.data.lastVarData = { a: a, alpha: alphaCanvas, beta: betaCanvas };
+
+        html += `<div class="step"><h3>5. Tableau de Signe</h3>`;
+        html += `<div class="canvas-wrapper"><canvas id="signCanvas"></canvas></div>`;
+        
+        // Bouton pour ouvrir le graphique
+        html += `<div style="text-align: center; margin-top: 30px;">`;
+        html += `<button class="graph-btn" onclick="Graph.openModal()">`;
+        html += `<span>📈</span> Voir le tracé de la parabole`;
+        html += `</button>`;
+        html += `</div></div>`;
+        
+        const signA = a > 0 ? "+" : "-", signOpp = a > 0 ? "-" : "+";
+        let signData = { signs: [], roots: [] };
+        if (!hasRoots) signData.signs = [signA];
+        else if (singleRoot) { signData.roots = [root1Canvas]; signData.signs = [signA]; }
+        else { signData.roots = [root1Canvas, root2Canvas]; signData.signs = [signA, signOpp, signA]; }
+        App.data.lastSignData = signData;
+
+        // Stocker les données pour le graphique
+        Graph.currentFunction = {
+            a: a, b: b, c: c,
+            alpha: alphaFrac.val(),
+            beta: betaFrac.val(),
+            roots: roots,
+            v1: v1, v2: v2,
+            fv1: fv1, fv2: fv2
+        };
+
+        return html;
+    },
+
+    solveApplication: () => {
+        const { a, b, c } = App.data.opt;
+        const alphaFrac = new MathEngine.Fraction(-b, 2*a);
+        const term1 = alphaFrac.sq().mul(new MathEngine.Fraction(a, 1));
+        const term2 = alphaFrac.mul(new MathEngine.Fraction(b, 1));
+        const betaFrac = term1.add(term2).add(new MathEngine.Fraction(c, 1));
+        let html = `<div class="step">`;
+        html += `<p>Polynôme avec \\( a = ${a} < 0 \\). Parabole tournée vers le bas : maximum au sommet.</p>`;
+        html += `<p>Quantité optimale \\( \\alpha =  \\mathbf{${alphaFrac.toTex()}} \\)</p>`;
+        html += `<p>Bénéfice maximal \\( B_{max} = \\mathbf{${betaFrac.toTex()}} \\) k€.</p></div>`;
+        return html;
+    },
+
+    showExerciseSolution: () => {
+        const el = document.getElementById('solution-ex1');
+        document.getElementById('solution-ex1-content').innerHTML = App.solveExercise();
+        el.style.display = 'block';
+        MathJax.typesetPromise();
+        setTimeout(() => {
+            CanvasRender.drawVariationTable('varCanvas', App.data.lastVarData);
+            CanvasRender.drawSignTable('signCanvas', App.data.lastSignData);
+        }, 50);
+    },
+
+    showApplicationSolution: () => {
+        const el = document.getElementById('solution-app');
+        document.getElementById('solution-app-content').innerHTML = App.solveApplication();
+        el.style.display = 'block';
+        MathJax.typesetPromise();
+    }
+};
+
+/**
+ * GESTION DES MODALS
+ */
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Fermer le modal en cliquant en dehors
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Fermer avec la touche Échap
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.style.display = 'none';
+        });
+        document.body.style.overflow = 'auto';
+    }
+});
+
+/**
+ * INITIALISATION
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    App.init();
+});
+</script>
+</body>
+</html>
