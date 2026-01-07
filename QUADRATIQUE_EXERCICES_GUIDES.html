@@ -581,47 +581,127 @@ function drawSigns(data) {
         // 1. Génération des données mathématiques
         const data = generateData();
         
-        // Choix de la forme à afficher (développée, canonique ou factorisée)
+        // --- NOUVEAUTÉ FICHIER TXT : Choix aléatoire des noms de fonction et variable ---
+        const fName = pick(['f', 'g', 'h', 'p', 'q', 'r', 'u', 'v']); // Nom de la fonction
+        const vName = pick(['x', 't']); // Nom de la variable (x ou t)
+        
+        // Choix de la forme à afficher
         const forms = ['developed', 'canonical'];
         if (data.x1 !== null && Number.isInteger(data.x1) && Number.isInteger(data.x2)) forms.push('factored');
-        const presentForm = pick(forms);
+        
+        // On force parfois le scénario "Complet/Géométrique" (25% de chance)
+        const scenario = Math.random(); 
+        let presentForm = pick(forms);
+        
+        // Si on tombe sur le scénario géométrique, on préfère la forme canonique au départ
+        if (scenario > 0.75) presentForm = 'canonical';
 
         let exprLatex = "";
-        const v = data.varName;
         
-        // Construction de l'expression LaTeX selon la forme choisie
+        // Construction de l'expression LaTeX
         if (presentForm === 'developed') {
-            let bStr = fmtCoeff(data.b, v);
+            let bStr = fmtCoeff(data.b, vName);
             let cStr = fmt(data.c, true);
-            if (data.a === 1) exprLatex = `${v}^2 ${bStr} ${cStr}`;
-            else if (data.a === -1) exprLatex = `-${v}^2 ${bStr} ${cStr}`;
-            else exprLatex = `${data.a}${v}^2 ${bStr} ${cStr}`;
+            if (data.a === 1) exprLatex = `${vName}^2 ${bStr} ${cStr}`;
+            else if (data.a === -1) exprLatex = `-${vName}^2 ${bStr} ${cStr}`;
+            else exprLatex = `${data.a}${vName}^2 ${bStr} ${cStr}`;
         } else if (presentForm === 'canonical') {
             let signAlpha = data.alpha >= 0 ? '-' : '+';
             let valAlpha = Math.abs(data.alpha);
             let betaStr = fmt(data.beta, true);
             let aStr = (data.a === 1) ? '' : (data.a === -1 ? '-' : data.a);
-            exprLatex = `${aStr}(${v} ${signAlpha} ${valAlpha})^2 ${betaStr}`;
+            exprLatex = `${aStr}(${vName} ${signAlpha} ${valAlpha})^2 ${betaStr}`;
         } else {
             let s1 = data.x1 >= 0 ? '-' : '+';
             let s2 = data.x2 >= 0 ? '-' : '+';
             let aStr = (data.a === 1) ? '' : (data.a === -1 ? '-' : data.a);
-            exprLatex = `${aStr}(${v} ${s1} ${Math.abs(data.x1)})(${v} ${s2} ${Math.abs(data.x2)})`;
+            exprLatex = `${aStr}(${vName} ${s1} ${Math.abs(data.x1)})(${vName} ${s2} ${Math.abs(data.x2)})`;
         }
         
-        // Nettoyage des espaces superflus
         exprLatex = exprLatex.replace(/\s+/g, ' ').trim();
 
         // Affichage de l'énoncé
-        document.getElementById('statement').innerHTML = `Soit \\(${data.funcName}\\) la fonction définie sur \\(\\mathbb{R}\\) par : 
-        \\[ ${data.funcName}(${v}) = ${exprLatex} \\]`;
+        document.getElementById('statement').innerHTML = `Soit \\(${fName}\\) la fonction définie sur \\(\\mathbb{R}\\) par : 
+        \\[ ${fName}(${vName}) = ${exprLatex} \\]`;
 
         let questions = [];
         let solutionsHtml = "";
         let qIndex = 1;
 
-        // --- SCENARIO 1 : Forme Canonique (alpha, beta, variations) ---
-        if (Math.random() < 0.33 || presentForm === 'canonical') {
+        // =========================================================
+        // SCENARIO 4 (NOUVEAU) : Analyse Structurelle & Géométrique
+        // Basé sur Exercices_conditions.txt
+        // =========================================================
+        if (scenario > 0.75) {
+            
+            // Q1: Transformations du plan
+            questions.push(`Par quelles transformations géométriques passe-t-on de la fonction carrée ($y=${vName}^2$) à la courbe de $${fName}$ ?`);
+            solutionsHtml += createCorrectionBlock(qIndex++, "Transformations Géométriques",
+                `On part de la forme canonique : \\( a(${vName} - \\alpha)^2 + \\beta \\).<br>
+                 1. Multiplication par \\(a\\) (dilatation/renversement).<br>
+                 2. Translation de vecteur \\(\\vec{u}(\\alpha ; \\beta)\\).`,
+                `Ici, \\(\\alpha = ${data.alpha}\\) et \\(\\beta = ${data.beta}\\).<br>
+                 Le sommet de la parabole est \\(S(${data.alpha} ; ${data.beta})\\).<br>
+                 <div class="conclusion">On passe de \\(y=${vName}^2\\) à \\(C_${fName}\\) par une dilatation de rapport ${data.a} suivie d'une translation de vecteur \\(\\vec{u}(${data.alpha} ; ${data.beta})\\).</div>`
+            );
+
+            // Q2: Axe de symétrie
+            questions.push(`Donner l'équation de l'axe de symétrie de la parabole.`);
+            solutionsHtml += createCorrectionBlock(qIndex++, "Axe de symétrie",
+                `L'axe de symétrie d'une parabole passe toujours par son sommet. C'est une droite verticale d'équation \\(x = \\alpha\\).`,
+                `On a identifié \\(\\alpha = ${data.alpha}\\).<br>
+                 <div class="conclusion">L'équation de l'axe de symétrie est \\(${vName} = ${data.alpha}\\).</div>`
+            );
+
+            // Q3: Développement et identification (a, b, c)
+            if (presentForm !== 'developed') {
+                questions.push(`Développer l'expression pour identifier les coefficients \\(a, b, c\\).`);
+                let stepDev = "";
+                if (presentForm === 'canonical') stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta, vName);
+                else stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2, vName);
+                
+                solutionsHtml += createCorrectionBlock(qIndex++, "Forme Développée",
+                    `On développe pour obtenir la forme \\(a${vName}^2 + b${vName} + c\\).`,
+                    `${stepDev}<br>
+                     On identifie :<br>
+                     \\( a = ${data.a} \\)<br>
+                     \\( b = ${data.b} \\)<br>
+                     \\( c = ${data.c} \\)`
+                );
+            }
+
+            // Q4: Interprétation de f(0) et f'(0)
+            questions.push(`Que valent \\(${fName}(0)\\) et \\(${fName}'(0)\\) (nombre dérivé en 0) ? Interpréter graphiquement.`);
+            solutionsHtml += createCorrectionBlock(qIndex++, "Image de 0 et Nombre Dérivé",
+                `Dans l'expression développée \\(a${vName}^2 + b${vName} + c\\) :<br>
+                 - \\(c\\) est l'ordonnée à l'origine (image de 0).<br>
+                 - \\(b\\) est le coefficient directeur de la tangente en 0 (nombre dérivé en 0).`,
+                `D'après l'identification précédente : \\(c = ${data.c}\\) et \\(b = ${data.b}\\).<br>
+                 <div class="conclusion">
+                    1. \\(${fName}(0) = ${data.c}\\) : La courbe coupe l'axe des ordonnées au point \\((0 ; ${data.c})\\).<br>
+                    2. \\(${fName}'(0) = ${data.b}\\) : La tangente à la courbe au point d'abscisse 0 a pour pente ${data.b}.
+                 </div>`
+            );
+
+            // Q5: Variations (rappel)
+            questions.push(`En déduire le tableau de variation sur \\(\\mathbb{R}\\).`);
+            let sens = data.a > 0 ? "décroissante puis croissante" : "croissante puis décroissante";
+            solutionsHtml += createCorrectionBlock(qIndex++, "Variations",
+                `Le sens dépend du signe de \\(a\\) (${data.a}). Le changement se fait en \\(\\alpha = ${data.alpha}\\).`,
+                `<div class="conclusion">
+                    La fonction est ${sens}.<br>
+                    <div class="table-wrapper">
+                        <canvas id="solVarCanvas" width="500" height="180"></canvas>
+                        <div id="solVarLabels" class="latex-layer"></div>
+                    </div>
+                 </div>`
+            );
+
+        }
+        // =========================================================
+        // SCENARIO 1 : Forme Canonique Classique
+        // =========================================================
+        else if (Math.random() < 0.33 || presentForm === 'canonical') {
             
             // Q1: Trouver Alpha et Beta
             if (presentForm !== 'canonical') {
@@ -629,29 +709,29 @@ function drawSigns(data) {
                 
                 let stepDev = "";
                 if (presentForm === 'factored') {
-                    stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2);
+                    stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2, vName);
                 } else {
                     stepDev = `<div class="intermediate-step">Forme développée donnée : on identifie directement \\(a=${data.a}, b=${data.b}, c=${data.c}\\).</div>`;
                 }
 
                 solutionsHtml += createCorrectionBlock(qIndex++, "Calcul de la forme canonique",
-                    `La forme canonique est \\(a(x - \\alpha)^2 + \\beta\\).<br>
-                     Formules : \\(\\alpha = \\frac{-b}{2a}\\) et \\(\\beta = f(\\alpha)\\).`,
+                    `La forme canonique est \\(a(${vName} - \\alpha)^2 + \\beta\\).<br>
+                     Formules : \\(\\alpha = \\frac{-b}{2a}\\) et \\(\\beta = ${fName}(\\alpha)\\).`,
                     
                     `${stepDev}
                      1. <strong>Calcul de \\(\\alpha\\)</strong> :<br>
                      \\( \\alpha = \\frac{-b}{2a} = \\frac{-(${data.b})}{2 \\times (${data.a})} = \\frac{${-data.b}}{${2*data.a}} = ${data.alpha} \\)<br><br>
                      2. <strong>Calcul de \\(\\beta\\)</strong> (image de alpha) :<br>
-                     On remplace \\(x\\) par \\(${data.alpha}\\) dans la forme développée :<br>
+                     On remplace \\(${vName}\\) par \\(${data.alpha}\\) dans la forme développée :<br>
                      \\( \\beta = ${data.a}(${data.alpha})^2 + (${data.b})(${data.alpha}) + (${data.c}) \\)<br>
                      \\( \\beta = ${data.a}(${data.alpha*data.alpha}) + (${data.b*data.alpha}) + ${data.c} \\)<br>
                      \\( \\beta = ${data.beta} \\)<br>
-                     <div class="conclusion">Forme canonique : \\(${data.funcName}(x) = ${data.a}(x - (${data.alpha}))^2 + (${data.beta})\\).</div>`
+                     <div class="conclusion">Forme canonique : \\(${fName}(${vName}) = ${data.a}(${vName} - (${data.alpha}))^2 + (${data.beta})\\).</div>`
                 );
             } else {
                 questions.push(`Donner les valeurs de \\(\\alpha\\) et \\(\\beta\\) par lecture directe.`);
                 solutionsHtml += createCorrectionBlock(qIndex++, "Lecture de la forme canonique",
-                    `On identifie par rapport au modèle : \\( a(x - \\alpha)^2 + \\beta \\).<br>Attention au signe "moins" devant alpha dans la parenthèse !`,
+                    `On identifie par rapport au modèle : \\( a(${vName} - \\alpha)^2 + \\beta \\).<br>Attention au signe "moins" devant alpha dans la parenthèse !`,
                     `Expression donnée : \\( ${exprLatex} \\)<br>
                      On lit :<br>
                      - \\(\\alpha = ${data.alpha}\\) (la valeur qui annule le carré)<br>
@@ -668,7 +748,7 @@ function drawSigns(data) {
                  Si \\(a > 0\\) : ↘️ puis ↗️ (minimum en \\(\\beta\\))<br>
                  Si \\(a < 0\\) : ↗️ puis ↘️ (maximum en \\(\\beta\\))`,
                 `Ici \\(a = ${data.a}\\). Comme \\(a\\) est ${data.a > 0 ? 'positif' : 'négatif'}, la parabole est orientée vers le ${data.a > 0 ? 'haut' : 'bas'}.<br>
-                 Le changement de variation se fait en \\(x = \\alpha = ${data.alpha}\\).<br>
+                 Le changement de variation se fait en \\(${vName} = \\alpha = ${data.alpha}\\).<br>
                  <div class="conclusion">
                     La fonction est ${sens}. Extremum : ${data.beta}.<br>
                     <strong>Tableau de variation :</strong><br>
@@ -680,18 +760,20 @@ function drawSigns(data) {
             );
         }
 
-        // --- SCENARIO 2 : Racines (Delta ou factorisation) ---
+        // =========================================================
+        // SCENARIO 2 : Racines (Delta ou factorisation)
+        // =========================================================
         else if (Math.random() < 0.5 || presentForm === 'factored') {
             
             // Q1: Racines
             if (presentForm === 'factored') {
-                questions.push(`Résoudre \\(${data.funcName}(x) = 0\\).`);
+                questions.push(`Résoudre \\(${fName}(${vName}) = 0\\).`);
                 solutionsHtml += createCorrectionBlock(qIndex++, "Résolution (Produit Nul)",
                     `Un produit est nul si l'un au moins de ses facteurs est nul.`,
                     `\\( ${exprLatex} = 0 \\)<br>
-                     \\( x - ${data.x1} = 0 \\iff x = ${data.x1} \\)<br>
+                     \\( ${vName} - ${data.x1} = 0 \\iff ${vName} = ${data.x1} \\)<br>
                      Ou<br>
-                     \\( x - ${data.x2} = 0 \\iff x = ${data.x2} \\)<br>
+                     \\( ${vName} - ${data.x2} = 0 \\iff ${vName} = ${data.x2} \\)<br>
                      <div class="conclusion">Solutions : \\( S = \\{ ${data.x1} ; ${data.x2} \\} \\)</div>`
                 );
             } else {
@@ -699,15 +781,15 @@ function drawSigns(data) {
                 
                 let stepDev = "";
                 if (presentForm === 'canonical') {
-                    stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta);
+                    stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta, vName);
                 } else {
                     stepDev = `<div class="intermediate-step">Forme développée donnée : on identifie directement \\(a=${data.a}, b=${data.b}, c=${data.c}\\).</div>`;
                 }
 
                 let delta = data.b * data.b - 4 * data.a * data.c;
                 let conclusionRoots = "";
-                if(delta > 0) conclusionRoots = `Deux racines : \\(x_1 = \\frac{-b-\\sqrt{\\Delta}}{2a} = ${data.x1}\\) et \\(x_2 = \\frac{-b+\\sqrt{\\Delta}}{2a} = ${data.x2}\\)`;
-                else if(delta === 0) conclusionRoots = `Une racine double : \\(x_0 = \\frac{-b}{2a} = ${data.x1}\\)`;
+                if(delta > 0) conclusionRoots = `Deux racines : \\(${vName}_1 = \\frac{-b-\\sqrt{\\Delta}}{2a} = ${data.x1}\\) et \\(${vName}_2 = \\frac{-b+\\sqrt{\\Delta}}{2a} = ${data.x2}\\)`;
+                else if(delta === 0) conclusionRoots = `Une racine double : \\(${vName}_0 = \\frac{-b}{2a} = ${data.x1}\\)`;
                 else conclusionRoots = `Pas de racine réelle.`;
 
                 solutionsHtml += createCorrectionBlock(qIndex++, "Discriminant et Racines",
@@ -725,7 +807,7 @@ function drawSigns(data) {
             }
 
             // Q2: Signe
-            questions.push(`Dresser le tableau de signe.`);
+            questions.push(`Dresser le tableau de signe de \\(${fName}(${vName})\\).`);
             let regle = (data.x1 !== null && data.x1 !== data.x2) 
                 ? "Signe de \\(a\\) à l'extérieur des racines, signe contraire entre."
                 : "Toujours du signe de \\(a\\) (sauf annulation éventuelle).";
@@ -745,40 +827,42 @@ function drawSigns(data) {
             );
         }
 
-        // --- SCENARIO 3 : Analyse Graphique / Géométrique ---
+        // =========================================================
+        // SCENARIO 3 : Analyse Graphique Standard (Calculs)
+        // =========================================================
         else {
-            questions.push(`Calculer \\(${data.funcName}(0)\\).`);
+            questions.push(`Calculer \\(${fName}(0)\\).`);
             
             let calculZero = "";
             if(presentForm === 'factored') {
-                calculZero = `\\( f(0) = ${data.a}(0 - ${data.x1})(0 - ${data.x2}) = ${data.a} \\times (${-data.x1}) \\times (${-data.x2}) = ${data.c} \\)`;
+                calculZero = `\\( ${fName}(0) = ${data.a}(0 - ${data.x1})(0 - ${data.x2}) = ${data.a} \\times (${-data.x1}) \\times (${-data.x2}) = ${data.c} \\)`;
             } else if (presentForm === 'canonical') {
-                calculZero = `\\( f(0) = ${data.a}(0 - ${data.alpha})^2 + ${data.beta} = ${data.a}(${-data.alpha})^2 + ${data.beta} = ${data.a}\\times${data.alpha*data.alpha} + ${data.beta} = ${data.c} \\)`;
+                calculZero = `\\( ${fName}(0) = ${data.a}(0 - ${data.alpha})^2 + ${data.beta} = ${data.a}(${-data.alpha})^2 + ${data.beta} = ${data.a}\\times${data.alpha*data.alpha} + ${data.beta} = ${data.c} \\)`;
             } else {
-                calculZero = `\\( f(0) = ${data.a}(0)^2 + ${data.b}(0) + ${data.c} = ${data.c} \\)`;
+                calculZero = `\\( ${fName}(0) = ${data.a}(0)^2 + ${data.b}(0) + ${data.c} = ${data.c} \\)`;
             }
 
             solutionsHtml += createCorrectionBlock(qIndex++, "Image de zéro",
-                `Remplacer \\(x\\) par 0 dans l'expression.`,
+                `Remplacer \\(${vName}\\) par 0 dans l'expression.`,
                 `${calculZero}<br>
-                 <div class="conclusion">La courbe coupe l'axe des ordonnées (l'axe vertical) à la hauteur \\(y = ${data.c}\\).</div>`
+                 <div class="conclusion">La courbe coupe l'axe des ordonnées à la hauteur \\(y = ${data.c}\\).</div>`
             );
 
-            questions.push(`Déterminer \\(f'(0)\\) (nombre dérivé en 0).`);
+            questions.push(`Déterminer \\(${fName}'(0)\\) (nombre dérivé en 0).`);
             let stepDev = "";
              if (presentForm === 'canonical') {
-                stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta);
+                stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta, vName);
             } else if (presentForm === 'factored') {
-                stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2);
+                stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2, vName);
             } else {
                 stepDev = `<div class="intermediate-step">Forme développée : on lit directement \\(b=${data.b}\\).</div>`;
             }
 
             solutionsHtml += createCorrectionBlock(qIndex++, "Coefficient b et dérivée",
-                `Dans la forme développée \\(ax^2+bx+c\\), le coefficient \\(b\\) correspond à la pente de la tangente en 0.`,
+                `Dans la forme développée \\(a${vName}^2+b${vName}+c\\), le coefficient \\(b\\) correspond à la pente de la tangente en 0.`,
                 `${stepDev}
                  On a identifié \\(b = ${data.b}\\).<br>
-                 <div class="conclusion">Le nombre dérivé en 0 est \\(f'(0) = ${data.b}\\).</div>`
+                 <div class="conclusion">Le nombre dérivé en 0 est \\(${fName}'(0) = ${data.b}\\).</div>`
             );
         }
 
@@ -794,17 +878,13 @@ function drawSigns(data) {
         document.getElementById('exercise-area').style.display = 'block';
         document.getElementById('solution').style.display = 'none';
 
-        // 4. Rendu Graphique et LaTeX (CORRIGÉ)
-        // On dessine le graphe principal tout de suite
+        // 4. Rendu Graphique et LaTeX
         drawGraph(data);
 
         // On remplit les tableaux (Canvas + Labels LaTeX)
-        // Le setTimeout assure que le navigateur a bien injecté les divs 'solution-content' avant qu'on ne cherche à dessiner dedans
         setTimeout(() => {
             drawVariations(data);
             drawSigns(data);
-
-            // C'est SEULEMENT maintenant, après avoir injecté les labels LaTeX des tableaux, qu'on demande à MathJax de repasser.
             MathJax.typesetPromise(); 
         }, 10);
     }
