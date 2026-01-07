@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur Didactique : Second Degré (Pas à Pas)</title>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-bg: #fff3cd;
+            --info-bg: #d1ecf1;
+            --step-bg: #e8eaf6;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: var(--primary-color); text-align: center; margin-bottom: 30px; font-size: 1.8rem; }
+        h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-top: 30px; color: var(--primary-color); }
+        h3 { color: #555; margin-top: 25px; }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        button:hover { background-color: #2980b9; transform: translateY(-2px); }
+        button.secondary { background-color: #7f8c8d; }
+        button.secondary:hover { background-color: #6c7a7d; }
+
+        .math-statement {
+            font-size: 1.3em;
+            background: #eef2f3;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .questions-list { list-style-type: none; padding: 0; }
+        .questions-list li {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #fff;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Styles correction détaillée */
+        .solution-section {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s;
+        }
+
+        .correction-block {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .rappel-cours {
+            background-color: var(--warning-bg);
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        
+        .rappel-cours strong { color: #856404; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px; }
+
+        .demonstration {
+            background-color: var(--info-bg);
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .intermediate-step {
+            background-color: var(--step-bg);
+            border-left: 5px solid #3f51b5;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .conclusion {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--success-color);
+            font-weight: bold;
+            color: #1e7e34;
+        }
+
+        /* Styles Spécifiques aux Tableaux corrigés */
+.table-wrapper { 
+    position: relative; 
+    width: 500px; /* Largeur fixe pour correspondre au canvas */
+    height: 180px; 
+    margin: 20px auto; 
+    border: 1px solid #ddd;
+    background: #fff;
+}
+.latex-layer { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 500px; 
+    height: 180px; 
+    pointer-events: none; 
+}
+.latex-item { 
+    position: absolute; 
+    transform: translate(-50%, -50%); 
+    white-space: nowrap; 
+    font-size: 0.9rem; 
+    font-family: 'Times New Roman', serif;
+}
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎓 Entraînement Guidé : Second Degré</h1>
+    
+    <div class="controls">
+        <button onclick="generateExercise()">🔄 Nouvel Exercice</button>
+        <button class="secondary" onclick="toggleSolution()">💡 Correction Pas à Pas</button>
+	<button class="secondary" onclick="toggleCopyright()">⚖️ Copyright & Infos</button>
+    </div>
+   
+    <div id="copyright-content" style="display: none; margin-top: 20px; margin-bottom: 20px; padding: 15px; background: #e9ecef; border-radius: 8px; font-size: 0.85rem; text-align: left; border: 1px solid #dee2e6;">
+        <h3 style="margin-top:0; color:#2c3e50;">⚖️ Droits d'Auteur et Licence d'Utilisation</h3>
+        <p><strong>Auteur :</strong> Yann Merdy (yann.merdy@gmail.com) - Janvier 2026</p>
+        <p><strong>Licence d'Utilisation Non Commerciale</strong></p>
+        <p>Ce code HTML/CSS/JavaScript ainsi que le contenu généré par l'application sont la propriété intellectuelle exclusive de l'auteur, Yann Merdy.</p>
+        
+        <h4 style="margin-bottom:5px;">Conditions :</h4>
+        <ul style="margin-top:5px;">
+            <li><strong>Utilisation Privée et Éducative (Autorisée) :</strong> Vous êtes autorisé.e à utiliser, copier, modifier et distribuer ce code et son contenu <strong>uniquement</strong> à des fins <strong>personnelles, éducatives et non lucratives.</strong></li>
+            <li><strong>Utilisation Commerciale (Interdite) :</strong> Toute utilisation, distribution, intégration ou reproduction du code ou du contenu (total ou partiel) à des fins <strong>commerciales, lucratives ou professionnelles</strong> est <strong>strictement interdite</strong> sans un accord écrit préalable et explicite de l'auteur.</li>
+            <li><strong>Attribution :</strong> Toute reproduction ou modification doit conserver la mention de l'auteur originale (Yann Merdy) et la présente notice de droits d'auteur.</li>
+        </ul>
+        <p>Pour toute demande d'utilisation commerciale ou de licence spécifique, veuillez contacter l'auteur à l'adresse indiquée ci-dessus.</p>
+    </div>
+
+
+    <div id="exercise-area" style="display:none;">
+        <div class="exercise-box">
+            <h2>Énoncé</h2>
+            <div id="statement" class="math-statement"></div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="funcGraph" width="500" height="400"></canvas>
+            </div>
+            <p style="text-align:center; font-style:italic; color:#666; font-size:0.9em;">
+                Le graphique permet de vérifier la cohérence des résultats trouvés par le calcul.
+            </p>
+
+            <h3>Questions</h3>
+            <ul id="questions" class="questions-list"></ul>
+        </div>
+
+        <div id="solution" class="solution-section">
+            <h2>Correction Détaillée</h2>
+            <div id="solution-content"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Utilitaires Mathématiques ---
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function randNonZero(min, max) { let val = 0; while (val === 0) val = randInt(min, max); return val; }
+    
+    function fmt(n, addSign = false) { 
+        if (n === 0) return "";
+        if (n > 0) return addSign ? `+ ${n}` : `${n}`;
+        return `- ${Math.abs(n)}`;
+    }
+    
+    function fmtCoeff(n, variable) {
+        if (n === 0) return "";
+        let sign = n > 0 ? "+" : "-";
+        let abs = Math.abs(n);
+        let valStr = abs === 1 ? "" : abs;
+        return ` ${sign} ${valStr}${variable}`;
+    }
+    
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    // --- Moteur de Dessin des Tableaux (Porté de QUADRATIQUE.html) ---
+
+    function drawArrow(ctx, x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        const head = 8;
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        ctx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
+        ctx.stroke();
+    }
+
+    function addLatex(container, text, x, y, cw, ch) {
+        const el = document.createElement('div');
+        el.className = 'latex-item';
+        el.style.left = (x / cw * 100) + '%';
+        el.style.top = (y / ch * 100) + '%';
+        el.innerHTML = `\\( ${text} \\)`;
+        container.appendChild(el);
+    }
+
+    // Dessine le tableau de variation dans la solution
+    // Dessine le tableau de variation dans la solution
+
+// Fonction manquante pour dessiner le graphique principal
+function drawGraph(data) {
+    const canvas = document.getElementById('funcGraph');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Paramètres d'échelle
+    const scaleX = 40; // 40px par unité
+    const scaleY = 40; 
+    const offsetX = w / 2;
+    const offsetY = 3 * h / 4; // Axe x un peu plus bas pour voir la parabole souvent vers le haut
+
+    // Fonctions de conversion coordonnées -> pixels
+    const toPixX = (x) => offsetX + x * scaleX;
+    const toPixY = (y) => offsetY - y * scaleY;
+
+    // Nettoyage
+    ctx.clearRect(0, 0, w, h);
+
+    // --- Grille ---
+    ctx.beginPath();
+    ctx.strokeStyle = '#eee';
+    ctx.lineWidth = 1;
+    // Verticales
+    for (let x = -10; x <= 10; x++) {
+        ctx.moveTo(toPixX(x), 0);
+        ctx.lineTo(toPixX(x), h);
+    }
+    // Horizontales
+    for (let y = -10; y <= 15; y++) {
+        ctx.moveTo(0, toPixY(y));
+        ctx.lineTo(w, toPixY(y));
+    }
+    ctx.stroke();
+
+    // --- Axes ---
+    ctx.beginPath();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    // Axe X
+    ctx.moveTo(0, offsetY);
+    ctx.lineTo(w, offsetY);
+    // Axe Y
+    ctx.moveTo(offsetX, 0);
+    ctx.lineTo(offsetX, h);
+    ctx.stroke();
+
+    // --- Courbe (Parabole) ---
+    ctx.beginPath();
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    
+    // On trace pixel par pixel sur la largeur du canvas pour être fluide
+    let firstPoint = true;
+    for (let px = 0; px <= w; px++) {
+        // Conversion pixel -> x mathématique
+        let x = (px - offsetX) / scaleX;
+        // Calcul de f(x)
+        let y = data.a * x * x + data.b * x + data.c;
+        // Conversion y mathématique -> pixel
+        let py = toPixY(y);
+
+        // On ne dessine que si on est "à peu près" dans le canvas (évite les traits infinis bizarres)
+        if (py >= -100 && py <= h + 100) {
+            if (firstPoint) {
+                ctx.moveTo(px, py);
+                firstPoint = false;
+            } else {
+                ctx.lineTo(px, py);
+            }
+        } else {
+            // Si on sort du cadre, on "casse" le tracé pour éviter de relier des points éloignés
+            firstPoint = true; 
+        }
+    }
+    ctx.stroke();
+}
+
+function drawVariations(data) {
+    const canvas = document.getElementById('solVarCanvas');
+    const container = document.getElementById('solVarLabels');
+    
+    // Sécurité si l'élément n'existe pas encore
+    if(!canvas || !container) return;
+    
+    const ctx = canvas.getContext('2d');
+    const w = 500, h = 180;
+    
+    // Nettoyage
+    ctx.clearRect(0, 0, w, h);
+    container.innerHTML = ''; 
+
+    // Dessin des lignes du tableau
+    ctx.strokeStyle = "#2c3e50";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(10, 10, 480, 160); // Cadre extérieur
+    
+    ctx.beginPath(); 
+    ctx.moveTo(10, 60); ctx.lineTo(490, 60); // Ligne horizontale sous x
+    ctx.moveTo(100, 10); ctx.lineTo(100, 170); // Ligne verticale après f(x)
+    ctx.stroke();
+    
+    // Positionnement des labels (LaTeX)
+    addLatex(container, "x", 55, 35, w, h);
+    addLatex(container, "f(x)", 55, 115, w, h);
+    
+    addLatex(container, "-\\infty", 130, 35, w, h);
+    addLatex(container, data.alpha.toString(), 295, 35, w, h);
+    addLatex(container, "+\\infty", 460, 35, w, h);
+
+    ctx.strokeStyle = "#3498db";
+    ctx.lineWidth = 1.5;
+
+    if(data.a > 0) {
+        // Décroissant \ puis Croissant /
+        drawArrow(ctx, 150, 85, 270, 145); 
+        drawArrow(ctx, 320, 145, 440, 85);
+        addLatex(container, "+\\infty", 130, 75, w, h);
+        addLatex(container, data.beta.toString(), 295, 155, w, h);
+        addLatex(container, "+\\infty", 460, 75, w, h);
+    } else {
+        // Croissant / puis Décroissant \
+        drawArrow(ctx, 150, 145, 270, 85); 
+        drawArrow(ctx, 320, 85, 440, 145);
+        addLatex(container, "-\\infty", 130, 155, w, h);
+        addLatex(container, data.beta.toString(), 295, 75, w, h);
+        addLatex(container, "-\\infty", 460, 155, w, h);
+    }
+}
+
+// Dessine le tableau de signe dans la solution
+function drawSigns(data) {
+    const canvas = document.getElementById('solSignCanvas');
+    const container = document.getElementById('solSignLabels');
+    
+    if(!canvas || !container) return;
+    
+    const ctx = canvas.getContext('2d');
+    const w = 500, h = 150;
+    
+    ctx.clearRect(0,0,w,h);
+    container.innerHTML = '';
+
+    // Structure
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(20, 20, 460, 100);
+    ctx.beginPath(); 
+    ctx.moveTo(20, 70); ctx.lineTo(480, 70); 
+    ctx.moveTo(100, 20); ctx.lineTo(100, 120); 
+    ctx.stroke();
+    
+    addLatex(container, "x", 60, 45, w, h);
+    addLatex(container, "f(x)", 60, 95, w, h);
+    addLatex(container, "-\\infty", 130, 45, w, h);
+    addLatex(container, "+\\infty", 450, 45, w, h);
+
+    const sA = data.a > 0 ? "+" : "-";
+    const sOpp = data.a > 0 ? "-" : "+";
+
+    // Recalcul précis du Delta pour le tableau de signe
+    let delta = data.b*data.b - 4*data.a*data.c;
+    let roots = [];
+
+    // Logique de racines plus robuste
+    if (delta > 0.00001) { // Delta positif
+        // On utilise les racines calculées ou stockées
+        let r1 = (-data.b - Math.sqrt(delta)) / (2*data.a);
+        let r2 = (-data.b + Math.sqrt(delta)) / (2*data.a);
+        // On arrondit pour l'affichage propre
+        r1 = Math.round(r1 * 100) / 100;
+        r2 = Math.round(r2 * 100) / 100;
+        roots = [r1, r2].sort((a,b)=>a-b);
+    } else if (Math.abs(delta) < 0.00001) { // Delta quasi nul
+        let r0 = -data.b / (2*data.a);
+        r0 = Math.round(r0 * 100) / 100;
+        roots = [r0];
+    }
+    // Sinon pas de racines
+
+    // Remplissage du tableau selon le nombre de racines
+    if(roots.length === 0) {
+        addLatex(container, sA, 290, 95, w, h);
+    } else if(roots.length === 1) {
+        addLatex(container, fmt(roots[0]), 290, 45, w, h);
+        addLatex(container, "0", 290, 95, w, h);
+        addLatex(container, sA, 195, 95, w, h);
+        addLatex(container, sA, 385, 95, w, h);
+    } else {
+        addLatex(container, fmt(roots[0]), 200, 45, w, h);
+        addLatex(container, fmt(roots[1]), 380, 45, w, h);
+        
+        // Zéros sur la ligne f(x)
+        addLatex(container, "0", 200, 95, w, h);
+        addLatex(container, "0", 380, 95, w, h);
+        
+        // Signes
+        addLatex(container, sA, 140, 95, w, h);
+        addLatex(container, sOpp, 290, 95, w, h);
+        addLatex(container, sA, 440, 95, w, h);
+        
+        // Traits verticaux en pointillés pour les zéros
+        ctx.setLineDash([5, 3]);
+        ctx.beginPath();
+        ctx.moveTo(200 / w * 500, 70); ctx.lineTo(200 / w * 500, 120);
+        ctx.moveTo(380 / w * 500, 70); ctx.lineTo(380 / w * 500, 120);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+}
+
+
+    // --- Générateur de contenu pédagogique ---
+    
+    function createCorrectionBlock(questionIndex, title, rappel, demo) {
+        return `
+        <div class="correction-block">
+            <h4>Question ${questionIndex} : ${title}</h4>
+            <div class="rappel-cours">
+                <strong>📚 Rappel de cours & Méthode</strong>
+                ${rappel}
+            </div>
+            <div class="demonstration">
+                <strong>🧮 Résolution détaillée</strong><br>
+                ${demo}
+            </div>
+        </div>`;
+    }
+
+    function expandFactoredToDeveloped(a, x1, x2) {
+        const sum = x1 + x2;
+        const prod = x1 * x2;
+        const b = -a * sum;
+        const c = a * prod;
+        
+        let s1 = x1 >= 0 ? '-' : '+';
+        let s2 = x2 >= 0 ? '-' : '+';
+        let ax1 = Math.abs(x1);
+        let ax2 = Math.abs(x2);
+
+        return `
+        <div class="intermediate-step">
+            <strong>⚠️ Étape Préliminaire indispensable : Passage à la forme développée</strong><br>
+            Pour identifier les coefficients \\(a, b, c\\), nous devons développer l'expression factorisée.<br>
+            Expression de départ : \\( f(x) = ${a}(x ${s1} ${ax1})(x ${s2} ${ax2}) \\)<br><br>
+            1. On développe d'abord la double parenthèse (double distributivité) :<br>
+            \\( (x ${s1} ${ax1})(x ${s2} ${ax2}) = x^2 ${fmt( -x2, true)}x ${fmt(-x1, true)}x + (${s1=="-"?"-":"+"}${ax1})\\times(${s2=="-"?"-":"+"}${ax2}) \\)<br>
+            \\( = x^2 ${fmtCoeff(-(x1+x2), 'x')} ${fmt(x1*x2, true)} \\)<br><br>
+            2. On distribue maintenant le facteur \\(a = ${a}\\) sur tout le résultat :<br>
+            \\( f(x) = ${a} \\times [ x^2 ${fmtCoeff(-(x1+x2), 'x')} ${fmt(x1*x2, true)} ] \\)<br>
+            \\( f(x) = ${a}x^2 ${fmtCoeff(b, 'x')} ${fmt(c, true)} \\)<br><br>
+            <strong>Conclusion de l'étape :</strong> Nous avons identifié \\(a=${a}\\), \\(b=${b}\\), \\(c=${c}\\).
+        </div>`;
+    }
+
+    function expandCanonicalToDeveloped(a, alpha, beta) {
+        let b = -2 * a * alpha;
+        let c = a * alpha * alpha + beta;
+        
+        let sAlpha = alpha >= 0 ? '-' : '+';
+        let valAlpha = Math.abs(alpha);
+
+        return `
+        <div class="intermediate-step">
+            <strong>⚠️ Étape Préliminaire indispensable : Passage à la forme développée</strong><br>
+            Pour identifier les coefficients \\(a, b, c\\) nécessaires aux calculs, nous devons développer la forme canonique.<br>
+            Expression de départ : \\( f(x) = ${a}(x ${sAlpha} ${valAlpha})^2 ${fmt(beta, true)} \\)<br><br>
+            1. On développe l'identité remarquable \\((A-B)^2 = A^2 - 2AB + B^2\\) ou \\((A+B)^2\\) :<br>
+            \\( (x ${sAlpha} ${valAlpha})^2 = x^2 ${sAlpha} 2\\times x \\times ${valAlpha} + ${valAlpha}^2 = x^2 ${fmtCoeff(-2*alpha, 'x')} + ${alpha*alpha} \\)<br><br>
+            2. On distribue \\(a = ${a}\\) :<br>
+            \\( ${a}(x^2 ${fmtCoeff(-2*alpha, 'x')} + ${alpha*alpha}) = ${a}x^2 ${fmtCoeff(-2*a*alpha, 'x')} ${fmt(a*alpha*alpha, true)} \\)<br><br>
+            3. On n'oublie pas d'ajouter \\(\\beta = ${beta}\\) à la fin :<br>
+            \\( f(x) = ${a}x^2 ${fmtCoeff(-2*a*alpha, 'x')} ${fmt(a*alpha*alpha, true)} ${fmt(beta, true)} \\)<br>
+            \\( f(x) = ${a}x^2 ${fmtCoeff(b, 'x')} ${fmt(c, true)} \\)<br><br>
+            <strong>Conclusion de l'étape :</strong> Nous avons identifié \\(a=${a}\\), \\(b=${b}\\), \\(c=${c}\\).
+        </div>`;
+    }
+
+
+    // --- Logique de l'exercice ---
+    
+    function generateData() {
+        const varName = 'x';
+        const funcName = pick(['f', 'g', 'h', 'P']);
+        const a = randNonZero(-4, 4);
+        
+        let type = Math.random() > 0.5 ? 'roots' : 'vertex';
+        let alpha, beta, x1, x2, b, c;
+
+        if (type === 'vertex') {
+            alpha = randInt(-5, 5);
+            beta = randInt(-8, 8);
+            b = -2 * a * alpha;
+            c = a * alpha * alpha + beta;
+            let delta = b*b - 4*a*c;
+            x1 = delta >= 0 ? (-b - Math.sqrt(delta))/(2*a) : null;
+            x2 = delta >= 0 ? (-b + Math.sqrt(delta))/(2*a) : null;
+        } else {
+            x1 = randInt(-5, 4);
+            x2 = x1 + randInt(1, 5);
+            b = -a * (x1 + x2);
+            c = a * x1 * x2;
+            alpha = (x1 + x2) / 2;
+            beta = a * (alpha - x1) * (alpha - x2);
+        }
+
+        if(x1 !== null) x1 = Math.round(x1 * 100)/100;
+        if(x2 !== null) x2 = Math.round(x2 * 100)/100;
+        alpha = Math.round(alpha * 100)/100;
+        beta = Math.round(beta * 100)/100;
+
+        return { a, b, c, alpha, beta, x1, x2, varName, funcName, type };
+    }
+
+    function generateExercise() {
+        // 1. Génération des données mathématiques
+        const data = generateData();
+        
+        // Choix de la forme à afficher (développée, canonique ou factorisée)
+        const forms = ['developed', 'canonical'];
+        if (data.x1 !== null && Number.isInteger(data.x1) && Number.isInteger(data.x2)) forms.push('factored');
+        const presentForm = pick(forms);
+
+        let exprLatex = "";
+        const v = data.varName;
+        
+        // Construction de l'expression LaTeX selon la forme choisie
+        if (presentForm === 'developed') {
+            let bStr = fmtCoeff(data.b, v);
+            let cStr = fmt(data.c, true);
+            if (data.a === 1) exprLatex = `${v}^2 ${bStr} ${cStr}`;
+            else if (data.a === -1) exprLatex = `-${v}^2 ${bStr} ${cStr}`;
+            else exprLatex = `${data.a}${v}^2 ${bStr} ${cStr}`;
+        } else if (presentForm === 'canonical') {
+            let signAlpha = data.alpha >= 0 ? '-' : '+';
+            let valAlpha = Math.abs(data.alpha);
+            let betaStr = fmt(data.beta, true);
+            let aStr = (data.a === 1) ? '' : (data.a === -1 ? '-' : data.a);
+            exprLatex = `${aStr}(${v} ${signAlpha} ${valAlpha})^2 ${betaStr}`;
+        } else {
+            let s1 = data.x1 >= 0 ? '-' : '+';
+            let s2 = data.x2 >= 0 ? '-' : '+';
+            let aStr = (data.a === 1) ? '' : (data.a === -1 ? '-' : data.a);
+            exprLatex = `${aStr}(${v} ${s1} ${Math.abs(data.x1)})(${v} ${s2} ${Math.abs(data.x2)})`;
+        }
+        
+        // Nettoyage des espaces superflus
+        exprLatex = exprLatex.replace(/\s+/g, ' ').trim();
+
+        // Affichage de l'énoncé
+        document.getElementById('statement').innerHTML = `Soit \\(${data.funcName}\\) la fonction définie sur \\(\\mathbb{R}\\) par : 
+        \\[ ${data.funcName}(${v}) = ${exprLatex} \\]`;
+
+        let questions = [];
+        let solutionsHtml = "";
+        let qIndex = 1;
+
+        // --- SCENARIO 1 : Forme Canonique (alpha, beta, variations) ---
+        if (Math.random() < 0.33 || presentForm === 'canonical') {
+            
+            // Q1: Trouver Alpha et Beta
+            if (presentForm !== 'canonical') {
+                questions.push(`Déterminer la forme canonique (calculer \\(\\alpha\\) et \\(\\beta\\)).`);
+                
+                let stepDev = "";
+                if (presentForm === 'factored') {
+                    stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2);
+                } else {
+                    stepDev = `<div class="intermediate-step">Forme développée donnée : on identifie directement \\(a=${data.a}, b=${data.b}, c=${data.c}\\).</div>`;
+                }
+
+                solutionsHtml += createCorrectionBlock(qIndex++, "Calcul de la forme canonique",
+                    `La forme canonique est \\(a(x - \\alpha)^2 + \\beta\\).<br>
+                     Formules : \\(\\alpha = \\frac{-b}{2a}\\) et \\(\\beta = f(\\alpha)\\).`,
+                    
+                    `${stepDev}
+                     1. <strong>Calcul de \\(\\alpha\\)</strong> :<br>
+                     \\( \\alpha = \\frac{-b}{2a} = \\frac{-(${data.b})}{2 \\times (${data.a})} = \\frac{${-data.b}}{${2*data.a}} = ${data.alpha} \\)<br><br>
+                     2. <strong>Calcul de \\(\\beta\\)</strong> (image de alpha) :<br>
+                     On remplace \\(x\\) par \\(${data.alpha}\\) dans la forme développée :<br>
+                     \\( \\beta = ${data.a}(${data.alpha})^2 + (${data.b})(${data.alpha}) + (${data.c}) \\)<br>
+                     \\( \\beta = ${data.a}(${data.alpha*data.alpha}) + (${data.b*data.alpha}) + ${data.c} \\)<br>
+                     \\( \\beta = ${data.beta} \\)<br>
+                     <div class="conclusion">Forme canonique : \\(${data.funcName}(x) = ${data.a}(x - (${data.alpha}))^2 + (${data.beta})\\).</div>`
+                );
+            } else {
+                questions.push(`Donner les valeurs de \\(\\alpha\\) et \\(\\beta\\) par lecture directe.`);
+                solutionsHtml += createCorrectionBlock(qIndex++, "Lecture de la forme canonique",
+                    `On identifie par rapport au modèle : \\( a(x - \\alpha)^2 + \\beta \\).<br>Attention au signe "moins" devant alpha dans la parenthèse !`,
+                    `Expression donnée : \\( ${exprLatex} \\)<br>
+                     On lit :<br>
+                     - \\(\\alpha = ${data.alpha}\\) (la valeur qui annule le carré)<br>
+                     - \\(\\beta = ${data.beta}\\)<br>
+                     <div class="conclusion">Sommet \\(S(${data.alpha} ; ${data.beta})\\).</div>`
+                );
+            }
+
+            // Q2: Variations
+            questions.push(`Dresser le tableau de variation.`);
+            let sens = data.a > 0 ? "décroissante puis croissante" : "croissante puis décroissante";
+            solutionsHtml += createCorrectionBlock(qIndex++, "Variations",
+                `Le sens dépend du signe de \\(a\\).<br>
+                 Si \\(a > 0\\) : ↘️ puis ↗️ (minimum en \\(\\beta\\))<br>
+                 Si \\(a < 0\\) : ↗️ puis ↘️ (maximum en \\(\\beta\\))`,
+                `Ici \\(a = ${data.a}\\). Comme \\(a\\) est ${data.a > 0 ? 'positif' : 'négatif'}, la parabole est orientée vers le ${data.a > 0 ? 'haut' : 'bas'}.<br>
+                 Le changement de variation se fait en \\(x = \\alpha = ${data.alpha}\\).<br>
+                 <div class="conclusion">
+                    La fonction est ${sens}. Extremum : ${data.beta}.<br>
+                    <strong>Tableau de variation :</strong><br>
+                    <div class="table-wrapper">
+                        <canvas id="solVarCanvas" width="500" height="180"></canvas>
+                        <div id="solVarLabels" class="latex-layer"></div>
+                    </div>
+                 </div>`
+            );
+        }
+
+        // --- SCENARIO 2 : Racines (Delta ou factorisation) ---
+        else if (Math.random() < 0.5 || presentForm === 'factored') {
+            
+            // Q1: Racines
+            if (presentForm === 'factored') {
+                questions.push(`Résoudre \\(${data.funcName}(x) = 0\\).`);
+                solutionsHtml += createCorrectionBlock(qIndex++, "Résolution (Produit Nul)",
+                    `Un produit est nul si l'un au moins de ses facteurs est nul.`,
+                    `\\( ${exprLatex} = 0 \\)<br>
+                     \\( x - ${data.x1} = 0 \\iff x = ${data.x1} \\)<br>
+                     Ou<br>
+                     \\( x - ${data.x2} = 0 \\iff x = ${data.x2} \\)<br>
+                     <div class="conclusion">Solutions : \\( S = \\{ ${data.x1} ; ${data.x2} \\} \\)</div>`
+                );
+            } else {
+                questions.push(`Calculer le discriminant \\(\\Delta\\) et trouver les racines.`);
+                
+                let stepDev = "";
+                if (presentForm === 'canonical') {
+                    stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta);
+                } else {
+                    stepDev = `<div class="intermediate-step">Forme développée donnée : on identifie directement \\(a=${data.a}, b=${data.b}, c=${data.c}\\).</div>`;
+                }
+
+                let delta = data.b * data.b - 4 * data.a * data.c;
+                let conclusionRoots = "";
+                if(delta > 0) conclusionRoots = `Deux racines : \\(x_1 = \\frac{-b-\\sqrt{\\Delta}}{2a} = ${data.x1}\\) et \\(x_2 = \\frac{-b+\\sqrt{\\Delta}}{2a} = ${data.x2}\\)`;
+                else if(delta === 0) conclusionRoots = `Une racine double : \\(x_0 = \\frac{-b}{2a} = ${data.x1}\\)`;
+                else conclusionRoots = `Pas de racine réelle.`;
+
+                solutionsHtml += createCorrectionBlock(qIndex++, "Discriminant et Racines",
+                    `Calcul de \\(\\Delta = b^2 - 4ac\\).<br>
+                     - Si \\(\\Delta > 0\\) : 2 solutions.<br>
+                     - Si \\(\\Delta = 0\\) : 1 solution.<br>
+                     - Si \\(\\Delta < 0\\) : 0 solution.`,
+                    `${stepDev}
+                     1. <strong>Calcul du discriminant</strong> :<br>
+                     \\(\\Delta = (${data.b})^2 - 4 \\times (${data.a}) \\times (${data.c})\\)<br>
+                     \\(\\Delta = ${data.b*data.b} - (${4*data.a*data.c}) = ${delta}\\)<br><br>
+                     2. <strong>Calcul des racines</strong> :<br>
+                     ${conclusionRoots}`
+                );
+            }
+
+            // Q2: Signe
+            questions.push(`Dresser le tableau de signe.`);
+            let regle = (data.x1 !== null && data.x1 !== data.x2) 
+                ? "Signe de \\(a\\) à l'extérieur des racines, signe contraire entre."
+                : "Toujours du signe de \\(a\\) (sauf annulation éventuelle).";
+            
+            solutionsHtml += createCorrectionBlock(qIndex++, "Signe de la fonction",
+                regle,
+                `On sait que \\(a = ${data.a}\\) (${data.a > 0 ? 'positif' : 'négatif'}).<br>
+                 Les racines sont (si elles existent) : ${data.x1 !== null ? data.x1 + " et " + data.x2 : "Aucune"}.<br>
+                 <div class="conclusion">
+                    La fonction est du signe de \\(a\\) (${data.a>0 ? '+' : '-'}) "à l'extérieur" des zéros.<br>
+                    <strong>Tableau de signe :</strong><br>
+                    <div class="table-wrapper">
+                        <canvas id="solSignCanvas" width="500" height="150"></canvas>
+                        <div id="solSignLabels" class="latex-layer"></div>
+                    </div>
+                 </div>`
+            );
+        }
+
+        // --- SCENARIO 3 : Analyse Graphique / Géométrique ---
+        else {
+            questions.push(`Calculer \\(${data.funcName}(0)\\).`);
+            
+            let calculZero = "";
+            if(presentForm === 'factored') {
+                calculZero = `\\( f(0) = ${data.a}(0 - ${data.x1})(0 - ${data.x2}) = ${data.a} \\times (${-data.x1}) \\times (${-data.x2}) = ${data.c} \\)`;
+            } else if (presentForm === 'canonical') {
+                calculZero = `\\( f(0) = ${data.a}(0 - ${data.alpha})^2 + ${data.beta} = ${data.a}(${-data.alpha})^2 + ${data.beta} = ${data.a}\\times${data.alpha*data.alpha} + ${data.beta} = ${data.c} \\)`;
+            } else {
+                calculZero = `\\( f(0) = ${data.a}(0)^2 + ${data.b}(0) + ${data.c} = ${data.c} \\)`;
+            }
+
+            solutionsHtml += createCorrectionBlock(qIndex++, "Image de zéro",
+                `Remplacer \\(x\\) par 0 dans l'expression.`,
+                `${calculZero}<br>
+                 <div class="conclusion">La courbe coupe l'axe des ordonnées (l'axe vertical) à la hauteur \\(y = ${data.c}\\).</div>`
+            );
+
+            questions.push(`Déterminer \\(f'(0)\\) (nombre dérivé en 0).`);
+            let stepDev = "";
+             if (presentForm === 'canonical') {
+                stepDev = expandCanonicalToDeveloped(data.a, data.alpha, data.beta);
+            } else if (presentForm === 'factored') {
+                stepDev = expandFactoredToDeveloped(data.a, data.x1, data.x2);
+            } else {
+                stepDev = `<div class="intermediate-step">Forme développée : on lit directement \\(b=${data.b}\\).</div>`;
+            }
+
+            solutionsHtml += createCorrectionBlock(qIndex++, "Coefficient b et dérivée",
+                `Dans la forme développée \\(ax^2+bx+c\\), le coefficient \\(b\\) correspond à la pente de la tangente en 0.`,
+                `${stepDev}
+                 On a identifié \\(b = ${data.b}\\).<br>
+                 <div class="conclusion">Le nombre dérivé en 0 est \\(f'(0) = ${data.b}\\).</div>`
+            );
+        }
+
+        // 3. Mise à jour du DOM
+        document.getElementById('questions').innerHTML = "";
+        questions.forEach((q, i) => {
+            let li = document.createElement("li");
+            li.innerHTML = `<strong>${i+1}.</strong> ${q}`;
+            document.getElementById('questions').appendChild(li);
+        });
+
+        document.getElementById('solution-content').innerHTML = solutionsHtml;
+        document.getElementById('exercise-area').style.display = 'block';
+        document.getElementById('solution').style.display = 'none';
+
+        // 4. Rendu Graphique et LaTeX (CORRIGÉ)
+        // On dessine le graphe principal tout de suite
+        drawGraph(data);
+
+        // On remplit les tableaux (Canvas + Labels LaTeX)
+        // Le setTimeout assure que le navigateur a bien injecté les divs 'solution-content' avant qu'on ne cherche à dessiner dedans
+        setTimeout(() => {
+            drawVariations(data);
+            drawSigns(data);
+
+            // C'est SEULEMENT maintenant, après avoir injecté les labels LaTeX des tableaux, qu'on demande à MathJax de repasser.
+            MathJax.typesetPromise(); 
+        }, 10);
+    }
+    
+    // Fonction pour afficher/masquer la correction
+    function toggleSolution() {
+        const solutionDiv = document.getElementById('solution');
+        const btn = document.querySelector('button.secondary'); // Sélectionne le bouton correction
+        
+        if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
+            solutionDiv.style.display = 'block';
+            if(btn) btn.innerText = "Masquer la correction"; // Optionnel : change le texte
+            
+            // Petit hack pour forcer le redessin des canvas cachés si nécessaire
+            // (Parfois les canvas ne s'affichent pas bien s'ils étaient dans une div cachée)
+            const canvasList = solutionDiv.querySelectorAll('canvas');
+            canvasList.forEach(c => {
+                 const ctx = c.getContext('2d');
+                 // On ne fait rien de spécial, l'accès au contexte suffit souvent à rafraîchir
+            });
+            
+        } else {
+            solutionDiv.style.display = 'none';
+            if(btn) btn.innerText = "💡 Correction Pas à Pas";
+        }
+    }
+    
+    // Fonction pour afficher/masquer le copyright
+    function toggleCopyright() {
+        const cpDiv = document.getElementById('copyright-content');
+        if (cpDiv.style.display === 'none') {
+            cpDiv.style.display = 'block';
+            // Petit défilement doux vers le copyright pour qu'il soit visible
+            cpDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            cpDiv.style.display = 'none';
+        }
+    }
+
+    generateExercise();
+</script>
+
+</body>
+</html>
